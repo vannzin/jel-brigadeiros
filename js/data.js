@@ -6,7 +6,7 @@ const INITIAL_DATA = {
   settings: {
     storeName: "J&L Brigadeiros",
     slogan: "Doces artesanais feitos com carinho para momentos inesquecíveis",
-    whatsappNumber: "5511999999999", // Número para receber pedidos
+    whatsappNumber: "5531992535455", // Número oficial para receber pedidos (31) 99253-5455
     pixKey: "jl.brigadeiros@exemplo.com",
     pixKeyType: "E-mail",
     pixReceiver: "J&L Brigadeiros Artesanais",

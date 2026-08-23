@@ -23,6 +23,9 @@ class Store {
         if (this.data.settings.storeName === "JeL Doces & Confeitaria" || !this.data.settings.storeName) {
           this.data.settings.storeName = "J&L Brigadeiros";
         }
+        if (!this.data.settings.whatsappNumber || this.data.settings.whatsappNumber === "5511999999999") {
+          this.data.settings.whatsappNumber = "5531992535455";
+        }
         if (!this.data.settings.instagramUrl) {
           this.data.settings.instagramUrl = "https://www.instagram.com/_brigadeiroos/";
           this.data.settings.instagramHandle = "@_brigadeiroos";
