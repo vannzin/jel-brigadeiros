@@ -60,7 +60,7 @@ const INITIAL_DATA = {
       id: "prod-2",
       name: "Brigadeiro Especial (2 Sabores / Mesclado)",
       category: "especial",
-      description: "Brigadeiros especiais (escolha até 2 sabores / mesclado). Sabores disponíveis: Prestígio, Coco queimado, Amendoim Crocante, Amendoim com Chocolate, Casadinho e Sensação.",
+      description: "Brigadeiros especiais (escolha até 2 sabores / mesclado). Sabores disponíveis: Coco com Chocolate, Ninho com Chocolate, Chocolate com Morango e Chocolate com Amendoim.",
       image: "img/brigadeiro_especial.jpg",
       icon: "✨",
       badge: "Especial",
@@ -71,12 +71,10 @@ const INITIAL_DATA = {
       hasFlavors: true,
       maxFlavors: 2,
       availableFlavors: [
-        "Prestígio",
-        "Coco queimado",
-        "Amendoim Crocante",
-        "Amendoim com Chocolate",
-        "Casadinho",
-        "Sensação"
+        "Coco com Chocolate",
+        "Ninho com Chocolate",
+        "Chocolate com Morango",
+        "Chocolate com Amendoim"
       ],
       hasCustomTheme: false,
       hasStamp: false,
