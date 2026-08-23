@@ -42,6 +42,7 @@ class Store {
         if (prod2) {
           prod2.image = "img/brigadeiro_especial.jpg";
           prod2.description = INITIAL_DATA.products.find(p => p.id === "prod-2").description;
+          prod2.badge = INITIAL_DATA.products.find(p => p.id === "prod-2").badge;
           prod2.availableFlavors = INITIAL_DATA.products.find(p => p.id === "prod-2").availableFlavors;
         }
         const prod3 = (this.data.products || []).find(p => p.id === "prod-3");

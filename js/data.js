@@ -56,10 +56,10 @@ const INITIAL_DATA = {
       id: "prod-2",
       name: "Brigadeiro Especial (2 Sabores)",
       category: "especial",
-      description: "Brigadeiros gourmet especiais (escolha até 2 sabores). Sabores disponíveis: Prestígio, Coco queimado, Amendoim Crocante, Amendoim com Chocolate, Casadinho e Sensação.",
+      description: "Brigadeiros especiais (escolha até 2 sabores). Sabores disponíveis: Prestígio, Coco queimado, Amendoim Crocante, Amendoim com Chocolate, Casadinho e Sensação.",
       image: "img/brigadeiro_especial.jpg",
       icon: "✨",
-      badge: "Gourmet",
+      badge: "Especial",
       pricing: {
         50: 90.00,
         100: 170.00
@@ -154,7 +154,7 @@ const INITIAL_DATA = {
           productName: "Brigadeiro Especial (2 Sabores)",
           quantity: 100,
           unitPrice: 170.00,
-          flavors: ["Ninho com Nutella", "Pistache Gourmet"],
+          flavors: ["Ninho com Nutella", "Pistache Especial"],
           stamp: null,
           customTheme: null,
           itemNotes: "Entregar em caixas separadas se possível"
