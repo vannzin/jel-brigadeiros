@@ -1,0 +1,21 @@
+﻿{
+  "name": "jel-brigadeiros",
+  "version": "1.0.0",
+  "description": "J&L Brigadeiros Artesanais - Loja Online & Painel Administrativo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "confeitaria",
+    "brigadeiros",
+    "encomendas",
+    "delivery",
+    "railway"
+  ],
+  "author": "J&L Brigadeiros",
+  "license": "MIT"
+}

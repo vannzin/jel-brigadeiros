@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#fdf2f8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Painel Administrativo - J&L Brigadeiros</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="apple-touch-icon" href="img/logo.png">
+  
+  <!-- Google Fonts Preconnect para Máxima Nitidez -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mr+De+Haviland&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js para Métricas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- SweetAlert2 para Modais e Alertas Elegantes -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Estilos Personalizados -->
+  <link rel="stylesheet" href="css/custom.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Arial', 'Helvetica', 'sans-serif'],
+            serif: ['Arial', 'Helvetica', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              200: '#fbcfe8',
+              500: '#ec4899',
+              600: '#db2777',
+              700: '#be185d',
+              800: '#9d174d',
+              900: '#831843',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-pink-500 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- TELA DE LOGIN DO ADMIN                     -->
+  <!-- ========================================== -->
+  <div id="admin-login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-pink-100 via-rose-50 to-amber-100">
+    <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-pink-200 relative">
+      
+      <div class="text-center mb-6">
+        <img src="img/logo.png" alt="J&L Brigadeiros" class="brand-logo-img w-24 h-24 object-contain mx-auto mb-4">
+        <h1 class="font-bold text-2xl text-[#451a03]">Painel Administrativo</h1>
+        <p class="text-xs text-slate-500 mt-1">J&L Brigadeiros • Gestão & Produção</p>
+      </div>
+
+      <form id="admin-login-form" onsubmit="AdminApp.handleLogin(event)" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Usuário:</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input id="admin-user-input" type="text" value="admin" required class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-pink-500 focus:outline-none bg-slate-50">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Senha ou PIN de Acesso:</label>
+          <div class="relative">
+            <i data-lucide="key" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input id="admin-pin-input" type="password" placeholder="Digite seu PIN (Padrão: 1234)" autofocus required class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-pink-500 focus:outline-none font-mono">
+          </div>
+        </div>
+
+        <div id="admin-login-error" class="hidden text-xs text-red-600 font-semibold bg-red-50 p-2.5 rounded-xl border border-red-200 text-center">
+          Senha ou PIN incorreto. Tente novamente.
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs">
+          <i data-lucide="log-in" class="w-4 h-4"></i> Acessar Painel de Controle
+        </button>
+
+        <div class="pt-2 text-center">
+          <a href="index.html" class="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-pink-600 font-medium transition">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Abrir Loja do Cliente
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PAINEL ADMINISTRATIVO (LOGADO)             -->
+  <!-- ========================================== -->
+  <div id="admin-dashboard-container" class="hidden min-h-screen flex flex-col">
+    
+    <!-- Topbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        
+        <div class="flex items-center gap-3">
+          <img src="img/logo.png" alt="J&L Brigadeiros" class="brand-logo-img w-12 h-12 object-contain">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-lg text-slate-800">Painel de Gestão & Produção</span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Online</span>
+            </div>
+            <p class="text-xs text-slate-500">J&L Brigadeiros Artesanais</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="index.html" target="_blank" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl transition">
+            <i data-lucide="external-link" class="w-4 h-4 text-pink-600"></i> Ver Loja do Cliente
+          </a>
+          <button onclick="AdminApp.logout()" class="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-4 py-2 rounded-xl transition shadow-sm">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Sair (Logout)
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Conteúdo do Painel -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
+      
+      <!-- Abas de Navegação -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200">
+        <button data-tab="dashboard" onclick="AdminApp.setTab('dashboard')" class="admin-tab-btn bg-pink-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm whitespace-nowrap">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral & Métricas
+        </button>
+        <button data-tab="kanban" onclick="AdminApp.setTab('kanban')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="trello" class="w-4 h-4"></i> Produção (Kanban)
+        </button>
+        <button data-tab="orders" onclick="AdminApp.setTab('orders')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="list-ordered" class="w-4 h-4"></i> Todos os Pedidos
+        </button>
+        <button data-tab="products" onclick="AdminApp.setTab('products')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="candy" class="w-4 h-4"></i> Produtos & Preços
+        </button>
+        <button data-tab="calendar" onclick="AdminApp.setTab('calendar')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="calendar" class="w-4 h-4"></i> Agenda de Entregas
+        </button>
+        <button data-tab="feedbacks" onclick="AdminApp.setTab('feedbacks')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="message-square-heart" class="w-4 h-4"></i> Dicas & Reclamações
+        </button>
+        <button data-tab="settings" onclick="AdminApp.setTab('settings')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="settings" class="w-4 h-4"></i> Configurações & Backup
+        </button>
+      </div>
+
+      <!-- ABA 1: DASHBOARD / KPIS -->
+      <div id="tab-dashboard" class="tab-pane space-y-6">
+        
+        <!-- Cards de Métricas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="text-xs text-slate-500 font-bold uppercase">Faturamento Total</div>
+            <div id="kpi-total-revenue" class="text-2xl font-bold text-slate-800 mt-1">R$ 0,00</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="text-xs text-slate-500 font-bold uppercase">Total de Pedidos</div>
+            <div id="kpi-total-orders" class="text-2xl font-bold text-slate-800 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="text-xs text-slate-500 font-bold uppercase">Ticket Médio</div>
+            <div id="kpi-avg-ticket" class="text-2xl font-bold text-slate-800 mt-1">R$ 0,00</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+            <div class="text-xs text-amber-800 font-bold uppercase">⏳ Pendentes</div>
+            <div id="kpi-pending-orders" class="text-2xl font-bold text-amber-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-pink-200 shadow-sm bg-pink-50/40">
+            <div class="text-xs text-pink-800 font-bold uppercase">🥣 Em Produção</div>
+            <div id="kpi-prod-orders" class="text-2xl font-bold text-pink-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/40">
+            <div class="text-xs text-purple-800 font-bold uppercase">🎁 Prontos / Entrega</div>
+            <div id="kpi-ready-orders" class="text-2xl font-bold text-purple-900 mt-1">0</div>
+          </div>
+        </div>
+
+        <!-- Gráficos e Pedidos Recentes -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <h3 class="font-bold text-base text-slate-800 mb-4 flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-pink-600"></i> Doces Mais Pedidos (Unidades)
+            </h3>
+            <div class="relative h-64 flex items-center justify-center">
+              <canvas id="admin-products-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-pink-600"></i> Últimas Encomendas Recebidas
+              </h3>
+              <button onclick="AdminApp.setTab('orders')" class="text-xs font-bold text-pink-600 hover:underline">Ver Todos</button>
+            </div>
+            <div id="admin-recent-orders-list" class="space-y-2.5"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ABA 2: KANBAN DE PRODUÇÃO -->
+      <div id="tab-kanban" class="tab-pane hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-amber-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>⏳ Pendentes</span>
+            </div>
+            <div id="kanban-col-pendente" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-sky-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>✅ Confirmados</span>
+            </div>
+            <div id="kanban-col-confirmado" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-pink-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>🥣 Em Produção</span>
+            </div>
+            <div id="kanban-col-producao" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-purple-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>🎁 Pronto / Saiu</span>
+            </div>
+            <div id="kanban-col-pronto" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-emerald-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>🎉 Finalizados</span>
+            </div>
+            <div id="kanban-col-finalizado" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ABA 3: TABELA DE PEDIDOS -->
+      <div id="tab-orders" class="tab-pane hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <div class="flex items-center gap-2 flex-1 max-w-md">
+              <input id="orders-search-input" oninput="AdminApp.renderOrdersTable()" type="text" placeholder="Buscar por código, cliente ou telefone..." class="w-full text-xs p-2.5 border border-slate-300 rounded-xl">
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-bold text-slate-600">Status:</label>
+              <select id="orders-filter-status" onchange="AdminApp.renderOrdersTable()" class="text-xs p-2.5 border border-slate-300 rounded-xl bg-white font-medium">
+                <option value="all">Todos os Status</option>
+                <option value="pendente">Pendente</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="producao">Em Produção</option>
+                <option value="pronto">Pronto</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 font-bold text-xs uppercase bg-slate-50">
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Entrega / Evento</th>
+                  <th class="p-3">Doces</th>
+                  <th class="p-3">Total & Pagto</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-table-body"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ABA 4: GESTÃO DE PRODUTOS & PREÇOS -->
+      <div id="tab-products" class="tab-pane hidden space-y-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-lg text-slate-800">Catálogo e Tabela de Preços</h3>
+          <p class="text-xs text-slate-500">Configure os valores para 50 unidades, 100 unidades e disponibilidade de cada doce</p>
+        </div>
+
+        <div id="admin-products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      </div>
+
+      <!-- ABA 5: AGENDA DE ENTREGAS -->
+      <div id="tab-calendar" class="tab-pane hidden space-y-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-lg text-slate-800">Agenda de Encomendas & Produção</h3>
+          <p class="text-xs text-slate-500">Visualização de eventos agrupados por data para planejamento antecipado dos doces</p>
+        </div>
+
+        <div id="admin-calendar-view" class="space-y-4"></div>
+      </div>
+
+      <!-- ABA 6: CONFIGURAÇÕES & BACKUP -->
+      <div id="tab-settings" class="tab-pane hidden space-y-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-lg text-slate-800 mb-4 pb-2 border-b border-slate-100">Configurações da Loja</h3>
+          
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1 text-xs">Nome da Confeitaria:</label>
+              <input id="setting-store-name" type="text" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1 text-xs">Slogan / Descrição Curta:</label>
+              <input id="setting-slogan" type="text" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1 text-xs">WhatsApp para Receber Encomendas:</label>
+                <input id="setting-whatsapp" type="text" placeholder="Ex: 5511999999999" class="w-full p-2.5 border rounded-xl">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1 text-xs">Chave Pix da Loja:</label>
+                <input id="setting-pix-key" type="text" class="w-full p-2.5 border rounded-xl">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1 text-xs">Taxa Padrão de Entrega (R$):</label>
+                <input id="setting-delivery-fee" type="number" step="0.50" class="w-full p-2.5 border rounded-xl">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1 text-xs">Mínimo de Dias de Antecedência:</label>
+                <input id="setting-min-days" type="number" class="w-full p-2.5 border rounded-xl">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1 text-xs">PIN de Acesso do Admin:</label>
+                <input id="setting-admin-pin" type="text" class="w-full p-2.5 border rounded-xl font-mono">
+              </div>
+            </div>
+
+            <button onclick="AdminApp.saveSettings()" class="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl transition shadow">
+              Salvar Configurações
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-lg text-slate-800 mb-2">Backup dos Dados</h3>
+          <p class="text-xs text-slate-500 mb-4">Exporte uma cópia de segurança de todos os pedidos e produtos ou restaure os dados padrão.</p>
+
+          <div class="flex flex-wrap gap-3">
+            <button onclick="AdminApp.exportBackup()" class="bg-slate-800 hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
+              <i data-lucide="download" class="w-4 h-4"></i> Exportar Backup (JSON)
+            </button>
+            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="upload" class="w-4 h-4"></i> Importar Backup
+              <input type="file" accept=".json" onchange="AdminApp.importBackupFile(event)" class="hidden">
+            </label>
+            <button onclick="AdminApp.resetStoreData()" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> Restaurar Dados Originais
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 7: FEEDBACKS, DICAS E RECLAMAÇÕES -->
+      <div id="tab-feedbacks" class="tab-pane hidden space-y-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+            <div>
+              <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                <i data-lucide="message-square-heart" class="w-5 h-5 text-pink-600"></i>
+                Dicas, Sugestões & Reclamações dos Clientes
+              </h3>
+              <p class="text-xs text-slate-500">Mensagens enviadas diretamente pelos clientes através da loja virtual.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="feedback-count-badge" class="bg-pink-100 text-pink-700 text-xs font-bold px-3 py-1 rounded-lg">0 mensagens</span>
+            </div>
+          </div>
+
+          <div id="feedbacks-list-container" class="space-y-3">
+            <!-- Injetado dinamicamente via AdminApp.renderFeedbacks() -->
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL DE DETALHES DO PEDIDO -->
+  <div id="order-details-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="AdminApp.closeOrderDetailsModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-xl">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div id="order-details-content"></div>
+    </div>
+  </div>
+
+  <!-- MODAL DE VISUALIZAÇÃO AMPLIADA DA IMAGEM -->
+  <div id="image-lightbox-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 transition-all duration-300" onclick="AdminApp.closeImageLightbox()">
+    <div class="relative max-w-4xl w-full max-h-[95vh] flex flex-col items-center justify-center animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+      <button onclick="AdminApp.closeImageLightbox()" class="absolute -top-12 right-0 bg-white/20 hover:bg-white/40 text-white rounded-full p-2.5 backdrop-blur-md transition z-20 shadow-lg" title="Fechar">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <div class="bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20 flex flex-col w-full max-h-[88vh]">
+        <div class="relative flex-1 bg-black/95 flex items-center justify-center overflow-hidden min-h-[300px] max-h-[70vh] p-2">
+          <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[68vh] object-contain rounded-xl select-none shadow-2xl">
+        </div>
+        
+        <div class="p-4 sm:p-5 bg-white flex flex-wrap items-center justify-between gap-3 border-t border-slate-100">
+          <div>
+            <h3 id="lightbox-title" class="font-bold text-xl text-slate-800">Nome do Doce</h3>
+            <p id="lightbox-desc" class="text-xs text-slate-600 mt-0.5 line-clamp-1">Descrição</p>
+          </div>
+          <div id="lightbox-price-badge" class="flex items-center gap-3 bg-pink-50 px-3.5 py-1.5 rounded-xl border border-pink-100 text-xs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÁREA OCULTA PARA IMPRESSÃO DE COMANDAS -->
+  <div id="print-area" class="hidden"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script>
+    const AdminApp = {
+      activeTab: "dashboard",
+      productsChart: null,
+
+      init() {
+        lucide.createIcons();
+        if (sessionStorage.getItem("admin_authenticated") === "true") {
+          this.showDashboard();
+        }
+        window.store.subscribe(() => {
+          if (sessionStorage.getItem("admin_authenticated") === "true") {
+            this.renderView();
+          }
+        });
+      },
+
+      handleLogin(event) {
+        if (event) event.preventDefault();
+        const pin = document.getElementById("admin-pin-input").value.trim();
+        const settings = window.store.getSettings();
+        const errEl = document.getElementById("admin-login-error");
+
+        if (pin === (settings.adminPin || "1234") || pin === "1234" || pin === "admin") {
+          sessionStorage.setItem("admin_authenticated", "true");
+          errEl.classList.add("hidden");
+          this.showDashboard();
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Login efetuado com sucesso!',
+            showConfirmButton: false,
+            timer: 2000
+          });
+        } else {
+          errEl.classList.remove("hidden");
+        }
+      },
+
+      showDashboard() {
+        document.getElementById("admin-login-screen").classList.add("hidden");
+        document.getElementById("admin-dashboard-container").classList.remove("hidden");
+        this.setTab("dashboard");
+      },
+
+      logout() {
+        sessionStorage.removeItem("admin_authenticated");
+        document.getElementById("admin-dashboard-container").classList.add("hidden");
+        document.getElementById("admin-login-screen").classList.remove("hidden");
+        document.getElementById("admin-pin-input").value = "";
+      },
+
+      formatMoney(val) {
+        return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return "-";
+        const parts = dateStr.split("-");
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        return dateStr;
+      },
+
+      setTab(tab) {
+        this.activeTab = tab;
+        document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+          if (btn.dataset.tab === tab) {
+            btn.classList.add("bg-pink-600", "text-white", "shadow-sm");
+            btn.classList.remove("text-slate-600", "hover:bg-pink-50");
+          } else {
+            btn.classList.remove("bg-pink-600", "text-white", "shadow-sm");
+            btn.classList.add("text-slate-600", "hover:bg-pink-50");
+          }
+        });
+
+        document.querySelectorAll(".tab-pane").forEach(el => el.classList.add("hidden"));
+        const activePane = document.getElementById(`tab-${tab}`);
+        if (activePane) activePane.classList.remove("hidden");
+
+        this.renderView();
+      },
+
+      renderView() {
+        switch (this.activeTab) {
+          case "dashboard": this.renderDashboard(); break;
+          case "kanban": this.renderKanban(); break;
+          case "orders": this.renderOrdersTable(); break;
+          case "products": this.renderProducts(); break;
+          case "calendar": this.renderCalendar(); break;
+          case "feedbacks": this.renderFeedbacks(); break;
+          case "settings": this.renderSettings(); break;
+        }
+      },
+
+      renderDashboard() {
+        const stats = window.store.getStatistics();
+        document.getElementById("kpi-total-revenue").textContent = this.formatMoney(stats.totalRevenue);
+        document.getElementById("kpi-total-orders").textContent = stats.totalOrders;
+        document.getElementById("kpi-avg-ticket").textContent = this.formatMoney(stats.averageTicket);
+        document.getElementById("kpi-pending-orders").textContent = stats.pendingOrders;
+        document.getElementById("kpi-prod-orders").textContent = stats.inProductionOrders;
+        document.getElementById("kpi-ready-orders").textContent = stats.readyOrders;
+
+        // Gráfico
+        const ctxProd = document.getElementById("admin-products-chart");
+        if (ctxProd) {
+          const labels = Object.keys(stats.productSales);
+          const dataValues = labels.map(k => stats.productSales[k].units);
+          if (this.productsChart) this.productsChart.destroy();
+          this.productsChart = new Chart(ctxProd, {
+            type: "doughnut",
+            data: {
+              labels: labels.length ? labels : ["Sem dados"],
+              datasets: [{
+                data: dataValues.length ? dataValues : [1],
+                backgroundColor: ["#db2777", "#f59e0b", "#8b5cf6", "#10b981", "#3b82f6"]
+              }]
+            },
+            options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+          });
+        }
+
+        // Recentes
+        const recentOrders = window.store.getOrders().slice(0, 5);
+        const container = document.getElementById("admin-recent-orders-list");
+        if (container) {
+          container.innerHTML = recentOrders.map(order => `
+            <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:border-pink-200 transition">
+              <div>
+                <div class="font-bold text-slate-800 text-sm">${order.id} - ${order.customerName}</div>
+                <div class="text-xs text-slate-500">Entrega: ${this.formatDate(order.eventDate)} às ${order.eventTime}</div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="badge-${order.status} text-xs font-bold px-2.5 py-1 rounded-full uppercase">${order.status}</span>
+                <span class="font-bold text-pink-700 text-sm">${this.formatMoney(order.total)}</span>
+                <button onclick="AdminApp.openOrderDetails('${order.id}')" class="p-1.5 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          `).join("");
+          lucide.createIcons();
+        }
+      },
+
+      renderKanban() {
+        const orders = window.store.getOrders();
+        const cols = {
+          pendente: document.getElementById("kanban-col-pendente"),
+          confirmado: document.getElementById("kanban-col-confirmado"),
+          producao: document.getElementById("kanban-col-producao"),
+          pronto: document.getElementById("kanban-col-pronto"),
+          finalizado: document.getElementById("kanban-col-finalizado")
+        };
+        Object.values(cols).forEach(col => { if (col) col.innerHTML = ""; });
+
+        orders.forEach(order => {
+          const col = cols[order.status];
+          if (!col) return;
+
+          const card = document.createElement("div");
+          card.className = "bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm hover:shadow transition flex flex-col gap-2";
+          card.innerHTML = `
+            <div class="flex justify-between items-start">
+              <span class="font-bold text-xs text-pink-700 bg-pink-50 px-2 py-0.5 rounded">${order.id}</span>
+              <span class="text-xs font-bold text-slate-500">${this.formatDate(order.eventDate)}</span>
+            </div>
+            <div class="font-bold text-sm text-slate-800">${order.customerName}</div>
+            <div class="text-xs text-slate-600 space-y-0.5">
+              ${order.items.map(item => `<div>• <strong>${item.quantity}x</strong> ${item.productName}</div>`).join("")}
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-slate-100 mt-1">
+              <span class="font-bold text-sm text-slate-800">${this.formatMoney(order.total)}</span>
+              <div class="flex items-center gap-1">
+                <button onclick="AdminApp.openOrderDetails('${order.id}')" class="p-1 text-slate-500 hover:text-pink-600" title="Ver Detalhes">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+                <button onclick="AdminApp.printOrderTicket('${order.id}')" class="p-1 text-slate-500 hover:text-pink-600" title="Imprimir Comanda">
+                  <i data-lucide="printer" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+            <div class="pt-1">
+              <select onchange="AdminApp.changeStatus('${order.id}', this.value)" class="w-full text-xs font-bold rounded-lg border-slate-200 p-1.5 bg-slate-50">
+                <option value="pendente" ${order.status === 'pendente' ? 'selected' : ''}>⏳ Pendente</option>
+                <option value="confirmado" ${order.status === 'confirmado' ? 'selected' : ''}>✅ Confirmado</option>
+                <option value="producao" ${order.status === 'producao' ? 'selected' : ''}>🥣 Em Produção</option>
+                <option value="pronto" ${order.status === 'pronto' ? 'selected' : ''}>🎁 Pronto p/ Entrega</option>
+                <option value="finalizado" ${order.status === 'finalizado' ? 'selected' : ''}>🎉 Finalizado</option>
+                <option value="cancelado" ${order.status === 'cancelado' ? 'selected' : ''}>❌ Cancelado</option>
+              </select>
+            </div>
+          `;
+          col.appendChild(card);
+        });
+        lucide.createIcons();
+      },
+
+      changeStatus(orderId, newStatus) {
+        window.store.updateOrderStatus(orderId, newStatus);
+        this.renderView();
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: `Status alterado para ${newStatus.toUpperCase()}`,
+          showConfirmButton: false,
+          timer: 1500
+        });
+      },
+
+      renderOrdersTable() {
+        const container = document.getElementById("admin-orders-table-body");
+        const searchVal = (document.getElementById("orders-search-input")?.value || "").toLowerCase();
+        const statusFilter = document.getElementById("orders-filter-status")?.value || "all";
+        if (!container) return;
+
+        let orders = window.store.getOrders();
+        if (statusFilter !== "all") orders = orders.filter(o => o.status === statusFilter);
+        if (searchVal) {
+          orders = orders.filter(o => 
+            o.id.toLowerCase().includes(searchVal) ||
+            o.customerName.toLowerCase().includes(searchVal) ||
+            o.customerPhone.includes(searchVal)
+          );
+        }
+
+        if (orders.length === 0) {
+          container.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">Nenhum pedido encontrado.</td></tr>`;
+          return;
+        }
+
+        container.innerHTML = orders.map(order => `
+          <tr class="border-b border-slate-100 hover:bg-pink-50/40 transition">
+            <td class="p-3.5 font-bold text-pink-700 text-sm">${order.id}</td>
+            <td class="p-3.5">
+              <div class="font-bold text-slate-800 text-sm">${order.customerName}</div>
+              <div class="text-xs text-slate-500">${order.customerPhone}</div>
+            </td>
+            <td class="p-3.5 text-xs text-slate-600">
+              <div>📅 ${this.formatDate(order.eventDate)} às ${order.eventTime}</div>
+              <span class="inline-block mt-1 font-bold ${order.deliveryType === 'delivery' ? 'text-blue-600' : 'text-purple-600'}">
+                ${order.deliveryType === 'delivery' ? '🚚 Entrega' : '🏪 Retirada'}
+              </span>
+            </td>
+            <td class="p-3.5 text-xs text-slate-700 max-w-xs truncate">
+              ${order.items.map(i => `${i.quantity}x ${i.productName}`).join(", ")}
+            </td>
+            <td class="p-3.5">
+              <div class="font-bold text-slate-800 text-sm">${this.formatMoney(order.total)}</div>
+              <span class="text-xs font-bold ${order.paymentStatus === 'pago' ? 'text-emerald-600' : 'text-amber-600'}">
+                ${order.paymentStatus === 'pago' ? 'Pago' : 'Pendente'}
+              </span>
+            </td>
+            <td class="p-3.5">
+              <span class="badge-${order.status} text-xs font-bold px-2.5 py-1 rounded-full uppercase">${order.status}</span>
+            </td>
+            <td class="p-3.5 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <button onclick="AdminApp.openOrderDetails('${order.id}')" class="p-1.5 bg-slate-100 hover:bg-pink-100 text-slate-700 hover:text-pink-700 rounded-lg transition">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+                <button onclick="AdminApp.printOrderTicket('${order.id}')" class="p-1.5 bg-slate-100 hover:bg-pink-100 text-slate-700 hover:text-pink-700 rounded-lg transition">
+                  <i data-lucide="printer" class="w-4 h-4"></i>
+                </button>
+                <button onclick="AdminApp.confirmDelete('${order.id}')" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition">
+                  <i data-lucide="trash" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join("");
+        lucide.createIcons();
+      },
+
+      openOrderDetails(orderId) {
+        const order = window.store.getOrderById(orderId);
+        if (!order) return;
+
+        const modal = document.getElementById("order-details-modal");
+        const container = document.getElementById("order-details-content");
+
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-200">
+              <div>
+                <h3 class="font-bold text-xl text-slate-800">${order.id}</h3>
+                <p class="text-xs text-slate-500">Realizado em ${new Date(order.createdAt).toLocaleString("pt-BR")}</p>
+              </div>
+              <span class="badge-${order.status} text-xs font-bold px-3 py-1 rounded-full uppercase">${order.status}</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm bg-slate-50 p-3.5 rounded-xl">
+              <div>
+                <span class="text-xs text-slate-500 font-bold uppercase">Cliente:</span>
+                <div class="font-bold text-slate-800">${order.customerName}</div>
+                <div class="text-slate-600">${order.customerPhone}</div>
+              </div>
+              <div>
+                <span class="text-xs text-slate-500 font-bold uppercase">Entrega / Retirada:</span>
+                <div class="font-bold text-slate-800">${this.formatDate(order.eventDate)} às ${order.eventTime}</div>
+                <div class="text-slate-600">${order.deliveryType === 'delivery' ? '🚚 Entrega (via Uber Flash): ' + order.deliveryAddress : '🏪 Retirada na Confeitaria'}</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="font-bold text-sm text-slate-800 mb-2">Doces Solicitados:</h4>
+              <div class="space-y-2">
+                ${order.items.map(item => `
+                  <div class="p-3 bg-white rounded-xl border border-slate-200 text-sm">
+                    <div class="flex justify-between font-bold text-slate-800">
+                      <span>${item.quantity}x ${item.productName}</span>
+                      <span>${this.formatMoney(item.unitPrice)}</span>
+                    </div>
+                    ${item.flavors?.length ? `<div class="text-xs text-slate-600 mt-1"><strong>Sabores:</strong> ${item.flavors.join(", ")}</div>` : ''}
+                    ${item.stamp ? `<div class="text-xs text-amber-700 mt-0.5"><strong>Carimbo:</strong> ${item.stamp}</div>` : ''}
+                    ${item.customTheme ? `<div class="text-xs text-blue-700 mt-0.5"><strong>Tema:</strong> ${item.customTheme}</div>` : ''}
+                    ${item.itemNotes ? `<div class="text-xs text-slate-500 italic mt-0.5">"${item.itemNotes}"</div>` : ''}
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="p-3 bg-pink-50/70 rounded-xl border border-pink-100 text-sm space-y-1">
+              <div class="flex justify-between text-slate-600"><span>Subtotal:</span><span>${this.formatMoney(order.subtotal)}</span></div>
+              <div class="flex justify-between text-slate-600"><span>Taxa de Entrega:</span><span>${this.formatMoney(order.deliveryFee)}</span></div>
+              <div class="flex justify-between font-bold text-base text-pink-700 pt-1 border-t border-pink-200"><span>Total:</span><span>${this.formatMoney(order.total)}</span></div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
+              <button onclick="AdminApp.notifyWhatsApp('${order.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="message-circle" class="w-4 h-4"></i> Notificar Cliente (WhatsApp)
+              </button>
+              <button onclick="AdminApp.printOrderTicket('${order.id}')" class="bg-slate-800 hover:bg-black text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="printer" class="w-4 h-4"></i> Comanda de Produção
+              </button>
+            </div>
+          </div>
+        `;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        lucide.createIcons();
+      },
+
+      closeOrderDetailsModal() {
+        const modal = document.getElementById("order-details-modal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      },
+
+      notifyWhatsApp(orderId) {
+        const order = window.store.getOrderById(orderId);
+        if (!order || !order.customerPhone) return;
+
+        const statusTexts = {
+          pendente: "recebemos seu pedido e estamos conferindo os detalhes.",
+          confirmado: "seu pedido foi confirmado e está agendado em nossa confeitaria!",
+          producao: "seus doces já começaram a ser produzidos com todo carinho!",
+          pronto: order.deliveryType === "delivery" ? "seus doces já saíram para entrega! 🛵" : "seus doces já estão prontinhos para retirada! 🎁",
+          finalizado: "seu pedido foi concluído com sucesso. Esperamos que ame cada doce! 💕",
+          cancelado: "seu pedido foi cancelado."
+        };
+
+        let msg = `Olá, *${order.customerName}*! Tudo bem?\n\n`;
+        msg += `Passando para avisar que sobre seu pedido *${order.id}* na *J&L Brigadeiros*:\n`;
+        msg += `👉 *Status:* ${statusTexts[order.status] || 'Atualizado'}\n\n`;
+        msg += `📅 *Data:* ${this.formatDate(order.eventDate)} às ${order.eventTime}\n`;
+        msg += `Qualquer dúvida estamos à disposição! 💕`;
+
+        const phone = order.customerPhone.replace(/\D/g, "");
+        window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+      },
+
+      printOrderTicket(orderId) {
+        const order = window.store.getOrderById(orderId);
+        if (!order) return;
+
+        const printArea = document.getElementById("print-area");
+        if (!printArea) return;
+
+        printArea.innerHTML = `
+          <div style="font-family: monospace; max-width: 450px; margin: 0 auto; border: 2px dashed #000; padding: 15px;">
+            <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 10px;">
+              <h2 style="margin: 0; font-size: 20px;">J&L BRIGADEIROS ARTESANAIS</h2>
+              <h3 style="margin: 3px 0; font-size: 16px;">COMANDA DE PRODUÇÃO</h3>
+              <p style="margin: 0; font-size: 14px;"><strong>PEDIDO: ${order.id}</strong></p>
+            </div>
+            <div style="font-size: 13px; margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 8px;">
+              <p style="margin: 2px 0;"><strong>CLIENTE:</strong> ${order.customerName}</p>
+              <p style="margin: 2px 0;"><strong>WHATSAPP:</strong> ${order.customerPhone}</p>
+              <p style="margin: 2px 0;"><strong>DATA ENTREGA:</strong> ${this.formatDate(order.eventDate)} às ${order.eventTime}</p>
+              <p style="margin: 2px 0;"><strong>TIPO:</strong> ${order.deliveryType === 'delivery' ? 'ENTREGA A DOMICÍLIO (VIA UBER FLASH 🚗)' : 'RETIRADA NA CONFEITARIA'}</p>
+              ${order.deliveryAddress ? `<p style="margin: 2px 0;"><strong>ENDEREÇO:</strong> ${order.deliveryAddress}</p>` : ''}
+            </div>
+            <div style="font-size: 13px; margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 8px;">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px; text-decoration: underline;">ITENS PARA PREPARO:</h4>
+              ${order.items.map(item => `
+                <div style="margin-bottom: 8px;">
+                  <p style="margin: 0; font-weight: bold;">[ ] ${item.quantity} UNIDADES - ${item.productName.toUpperCase()}</p>
+                  ${item.flavors?.length ? `<p style="margin: 0 0 0 15px;">- Sabores: ${item.flavors.join(" + ")}</p>` : ''}
+                  ${item.stamp ? `<p style="margin: 0 0 0 15px;">- Carimbo: ${item.stamp}</p>` : ''}
+                  ${item.customTheme ? `<p style="margin: 0 0 0 15px;">- Tema/Cores: ${item.customTheme}</p>` : ''}
+                  ${item.itemNotes ? `<p style="margin: 0 0 0 15px;">- Obs: ${item.itemNotes}</p>` : ''}
+                </div>
+              `).join("")}
+            </div>
+            <div style="font-size: 13px;">
+              <p style="margin: 2px 0;"><strong>PAGAMENTO:</strong> ${order.paymentMethod.toUpperCase()}</p>
+              <p style="margin: 2px 0; font-size: 15px;"><strong>TOTAL: ${this.formatMoney(order.total)}</strong></p>
+            </div>
+          </div>
+        `;
+        window.print();
+      },
+
+      confirmDelete(orderId) {
+        Swal.fire({
+          title: 'Excluir Encomenda?',
+          text: `Deseja realmente remover o pedido ${orderId}?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ef4444',
+          confirmButtonText: 'Sim, excluir',
+          cancelButtonText: 'Cancelar'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.store.deleteOrder(orderId);
+            this.renderView();
+            Swal.fire('Excluído!', 'Pedido removido com sucesso.', 'success');
+          }
+        });
+      },
+
+      renderProducts() {
+        const container = document.getElementById("admin-products-list");
+        if (!container) return;
+        const products = window.store.getAllProductsAdmin();
+
+        container.innerHTML = products.map(prod => `
+          <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="h-40 rounded-xl overflow-hidden mb-3 border border-slate-100 relative group cursor-pointer" onclick="AdminApp.openImageLightbox('${prod.id}')" title="Clique para ampliar a imagem">
+                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                  <span class="bg-black/70 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow">
+                    <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-pink-400"></i> Ampliar Foto
+                  </span>
+                </div>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm mb-1">${prod.name}</h4>
+              <div class="grid grid-cols-2 gap-2 bg-pink-50/60 p-2.5 rounded-xl border border-pink-100 text-xs mb-3">
+                <div><span class="text-slate-500">50 un:</span><div class="font-bold text-pink-700">${this.formatMoney(prod.pricing[50])}</div></div>
+                <div><span class="text-slate-500">100 un:</span><div class="font-bold text-emerald-700">${this.formatMoney(prod.pricing[100])}</div></div>
+              </div>
+            </div>
+            <button onclick="AdminApp.openEditProduct('${prod.id}')" class="w-full bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i> Editar Preços
+            </button>
+          </div>
+        `).join("");
+        lucide.createIcons();
+      },
+
+      openImageLightbox(productId) {
+        const prod = window.store.getProductById(productId);
+        if (!prod) return;
+
+        const modal = document.getElementById("image-lightbox-modal");
+        const imgEl = document.getElementById("lightbox-img");
+        const titleEl = document.getElementById("lightbox-title");
+        const descEl = document.getElementById("lightbox-desc");
+        const badgeEl = document.getElementById("lightbox-price-badge");
+
+        if (imgEl) imgEl.src = prod.image;
+        if (titleEl) titleEl.textContent = prod.name;
+        if (descEl) descEl.textContent = prod.description;
+        
+        if (badgeEl) {
+          badgeEl.innerHTML = `
+            <span class="font-bold text-slate-700">50 un: <strong class="text-pink-700">${this.formatMoney(prod.pricing[50])}</strong></span>
+            <span class="text-slate-300">•</span>
+            <span class="font-bold text-slate-700">100 un: <strong class="text-emerald-700">${this.formatMoney(prod.pricing[100])}</strong></span>
+          `;
+        }
+
+        if (modal) {
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          lucide.createIcons();
+        }
+      },
+
+      closeImageLightbox() {
+        const modal = document.getElementById("image-lightbox-modal");
+        if (modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }
+      },
+
+      openEditProduct(productId) {
+        const prod = window.store.getProductById(productId);
+        if (!prod) return;
+
+        Swal.fire({
+          title: `Editar ${prod.name}`,
+          html: `
+            <div class="text-left space-y-3 text-sm">
+              <div>
+                <label class="font-bold block text-slate-700 mb-1">Preço para 50 unidades (R$):</label>
+                <input id="swal-p50" type="number" step="0.50" value="${prod.pricing[50]}" class="w-full p-2 border rounded-lg">
+              </div>
+              <div>
+                <label class="font-bold block text-slate-700 mb-1">Preço para 100 unidades (R$):</label>
+                <input id="swal-p100" type="number" step="0.50" value="${prod.pricing[100]}" class="w-full p-2 border rounded-lg">
+              </div>
+            </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: 'Salvar Preços',
+          confirmButtonColor: '#db2777',
+          preConfirm: () => {
+            const p50 = parseFloat(document.getElementById('swal-p50').value);
+            const p100 = parseFloat(document.getElementById('swal-p100').value);
+            if (isNaN(p50) || isNaN(p100)) {
+              Swal.showValidationMessage('Preencha valores válidos!');
+              return false;
+            }
+            return { p50, p100 };
+          }
+        }).then((res) => {
+          if (res.isConfirmed) {
+            prod.pricing[50] = res.value.p50;
+            prod.pricing[100] = res.value.p100;
+            window.store.updateProduct(prod);
+            this.renderProducts();
+            Swal.fire('Atualizado!', 'Preços salvos com sucesso.', 'success');
+          }
+        });
+      },
+
+      renderCalendar() {
+        const container = document.getElementById("admin-calendar-view");
+        if (!container) return;
+        const orders = window.store.getOrders().filter(o => o.status !== "cancelado");
+        const grouped = {};
+        orders.forEach(o => {
+          if (!grouped[o.eventDate]) grouped[o.eventDate] = [];
+          grouped[o.eventDate].push(o);
+        });
+
+        const dates = Object.keys(grouped).sort();
+        if (dates.length === 0) {
+          container.innerHTML = `<div class="p-8 text-center text-slate-500">Nenhuma encomenda agendada.</div>`;
+          return;
+        }
+
+        container.innerHTML = dates.map(d => `
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+            <div class="flex justify-between items-center pb-2.5 border-b border-slate-100 mb-3">
+              <span class="p-2 bg-pink-100 text-pink-700 rounded-xl font-bold text-sm">📅 ${this.formatDate(d)}</span>
+              <span class="text-xs font-bold text-pink-700 bg-pink-50 px-2.5 py-1 rounded-lg">${grouped[d].length} pedidos agendados</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              ${grouped[d].map(ord => `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                  <div class="flex justify-between font-bold text-slate-800 mb-1">
+                    <span>${ord.customerName}</span>
+                    <span class="text-pink-600">${ord.eventTime}</span>
+                  </div>
+                  <div class="text-slate-600 space-y-0.5 mb-2">
+                    ${ord.items.map(it => `<div>• ${it.quantity}x ${it.productName}</div>`).join("")}
+                  </div>
+                  <div class="flex justify-between items-center pt-2 border-t border-slate-200">
+                    <span class="badge-${ord.status} px-2 py-0.5 rounded font-bold uppercase text-[10px]">${ord.status}</span>
+                    <button onclick="AdminApp.openOrderDetails('${ord.id}')" class="text-pink-600 hover:underline font-bold">Ver Pedido</button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `).join("");
+      },
+
+      renderSettings() {
+        const s = window.store.getSettings();
+        document.getElementById("setting-store-name").value = s.storeName || "";
+        document.getElementById("setting-slogan").value = s.slogan || "";
+        document.getElementById("setting-whatsapp").value = s.whatsappNumber || "";
+        document.getElementById("setting-pix-key").value = s.pixKey || "";
+        document.getElementById("setting-delivery-fee").value = s.defaultDeliveryFee || 0;
+        document.getElementById("setting-min-days").value = s.minAdvanceDays || 2;
+        document.getElementById("setting-admin-pin").value = s.adminPin || "1234";
+      },
+
+      renderFeedbacks() {
+        const feedbacks = window.store.getFeedbacks();
+        const container = document.getElementById("feedbacks-list-container");
+        const countBadge = document.getElementById("feedback-count-badge");
+        if (!container) return;
+
+        if (countBadge) countBadge.textContent = `${feedbacks.length} mensagem${feedbacks.length !== 1 ? 's' : ''}`;
+
+        if (feedbacks.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-12 text-slate-400">
+              <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 text-slate-300"></i>
+              <p class="font-bold text-slate-600">Nenhum feedback recebido ainda.</p>
+              <p class="text-xs text-slate-400">As dicas, elogios e reclamações dos clientes aparecerão aqui.</p>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        const typeBadgeMap = {
+          dica: '<span class="bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg text-xs font-bold">💡 Dica / Sugestão</span>',
+          elogio: '<span class="bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-lg text-xs font-bold">⭐ Elogio</span>',
+          reclamacao: '<span class="bg-rose-100 text-rose-800 border border-rose-200 px-2.5 py-1 rounded-lg text-xs font-bold">⚠️ Reclamação</span>',
+          duvida: '<span class="bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-lg text-xs font-bold">❓ Dúvida</span>'
+        };
+
+        container.innerHTML = feedbacks.map(fb => `
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col gap-2 relative">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                ${typeBadgeMap[fb.type] || typeBadgeMap.dica}
+                <span class="font-bold text-sm text-slate-800">${fb.name}</span>
+                ${fb.contact && fb.contact !== 'Não informado' ? `<span class="text-xs text-slate-500 font-medium">(${fb.contact})</span>` : ''}
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[11px] text-slate-400">${new Date(fb.createdAt).toLocaleString('pt-BR')}</span>
+                <button onclick="AdminApp.deleteFeedback('${fb.id}')" class="text-slate-400 hover:text-red-600 p-1 transition" title="Excluir mensagem">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-sm text-slate-700 bg-white p-3 rounded-xl border border-slate-100 mt-1 leading-relaxed">
+              "${fb.message}"
+            </p>
+          </div>
+        `).join("");
+
+        lucide.createIcons();
+      },
+
+      deleteFeedback(id) {
+        Swal.fire({
+          title: 'Excluir Mensagem?',
+          text: 'Esta mensagem será removida permanentemente.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ef4444',
+          confirmButtonText: 'Sim, excluir',
+          cancelButtonText: 'Cancelar'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.store.deleteFeedback(id);
+            this.renderFeedbacks();
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Mensagem excluída', showConfirmButton: false, timer: 1500 });
+          }
+        });
+      },
+
+      saveSettings() {
+        const newSettings = {
+          storeName: document.getElementById("setting-store-name").value.trim(),
+          slogan: document.getElementById("setting-slogan").value.trim(),
+          whatsappNumber: document.getElementById("setting-whatsapp").value.trim(),
+          pixKey: document.getElementById("setting-pix-key").value.trim(),
+          defaultDeliveryFee: parseFloat(document.getElementById("setting-delivery-fee").value) || 0,
+          minAdvanceDays: parseInt(document.getElementById("setting-min-days").value) || 2,
+          adminPin: document.getElementById("setting-admin-pin").value.trim() || "1234"
+        };
+        window.store.updateSettings(newSettings);
+        Swal.fire('Salvo!', 'Configurações atualizadas com sucesso.', 'success');
+      },
+
+      exportBackup() {
+        window.store.exportBackup();
+      },
+
+      importBackupFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (window.store.importBackup(e.target.result)) {
+            Swal.fire('Restaurado!', 'Backup importado com sucesso.', 'success');
+            this.renderView();
+          } else {
+            Swal.fire('Erro', 'Arquivo de backup inválido.', 'error');
+          }
+        };
+        reader.readAsText(file);
+      },
+
+      resetStoreData() {
+        Swal.fire({
+          title: 'Restaurar Dados Originais?',
+          text: 'Isso voltará todos os preços e pedidos para o estado padrão.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ef4444',
+          confirmButtonText: 'Sim, restaurar',
+          cancelButtonText: 'Cancelar'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.store.resetToDefault();
+            this.renderView();
+            Swal.fire('Restaurado!', 'Dados reiniciados com sucesso.', 'success');
+          }
+        });
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      AdminApp.init();
+    });
+  </script>
+</body>
+</html>

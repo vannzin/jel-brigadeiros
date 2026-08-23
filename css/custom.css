@@ -1,0 +1,230 @@
+/* Estilos personalizados para J&L Brigadeiros */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Mr+De+Haviland&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+:root {
+  --font-body: Arial, Helvetica, sans-serif;
+  --font-haviland: 'Mr De Haviland', cursive;
+  --font-menu: 'Cormorant Garamond', 'Playfair Display', serif;
+  --primary: #d946ef;
+  --primary-dark: #a21caf;
+  --chocolate: #451a03;
+  --cream: #fffbeb;
+  --caramel: #b45309;
+  --rose-gold: #f43f5e;
+}
+
+body, button, input, select, textarea, table, p, span, div, h1, h2, h3, h4, h5, h6 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-haviland, .header-brand-title {
+  font-family: 'Mr De Haviland', cursive !important;
+  color: #3b1909 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  text-shadow: 0 1px 1px rgba(59, 25, 9, 0.10);
+  font-weight: 400;
+}
+
+.header-subtitle-menu {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #5c2d1a !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+.brand-logo-img {
+  image-rendering: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  border-radius: 9999px;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #fdf2f8;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath fill='%23f87171' fill-opacity='0.40' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' transform='translate(12, 12) scale(0.36)'/%3E%3Cpath fill='%23f87171' fill-opacity='0.30' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' transform='translate(44, 42) scale(0.28) rotate(-10 12 12)'/%3E%3C/svg%3E"),
+    linear-gradient(0deg, rgba(92, 45, 26, 0.08) 50%, transparent 50%),
+    linear-gradient(90deg, rgba(92, 45, 26, 0.08) 50%, transparent 50%);
+  background-size: 64px 64px, 38px 38px, 38px 38px;
+  background-attachment: fixed;
+  color: #334155;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism & Cards */
+.glass-nav {
+  background: #e2e8f0;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.glass-card {
+  background: #fce7f3;
+  border: 1.5px solid #f472b6;
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(219, 39, 119, 0.12), 0 8px 10px -6px rgba(219, 39, 119, 0.08);
+}
+
+/* Botão Encomendar Doce Azul Pastel Charmoso */
+.btn-encomendar {
+  position: relative;
+  font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  font-size: 13.5px;
+  letter-spacing: 0.06em;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 3px 12px -2px rgba(14, 165, 233, 0.45), 0 2px 5px -1px rgba(2, 132, 199, 0.30);
+  text-shadow: 0 1px 2px rgba(12, 74, 110, 0.45);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn-encomendar:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px -4px rgba(14, 165, 233, 0.65), 0 4px 12px -2px rgba(2, 132, 199, 0.40);
+  background: linear-gradient(135deg, #bae6fd 0%, #60a5fa 50%, #2563eb 100%);
+}
+
+.btn-encomendar:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-encomendar::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  transition: all 0.75s ease;
+  pointer-events: none;
+}
+
+.btn-encomendar:hover::after {
+  left: 120%;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fdf2f8;
+}
+::-webkit-scrollbar-thumb {
+  background: #f472b6;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #db2777;
+}
+
+/* Badges e Status */
+.badge-pendente {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.badge-confirmado {
+  background-color: #e0f2fe;
+  color: #075985;
+  border: 1px solid #bae6fd;
+}
+.badge-producao {
+  background-color: #fce7f3;
+  color: #9d174d;
+  border: 1px solid #fbcfe8;
+}
+.badge-pronto {
+  background-color: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}
+.badge-finalizado {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.badge-cancelado {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Animações */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite ease-in-out;
+}
+
+/* Otimização de Impressão */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  #print-area, #print-area * {
+    visibility: visible;
+  }
+  
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: white;
+    color: black !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Otimizações Mobile & PWA */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 640px) {
+  .mobile-bottom-sheet {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    max-height: 92vh !important;
+    width: 100% !important;
+  }
+}
+

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#fdf2f8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>J&L Brigadeiros - Encomendas & Confeitaria Artesanal</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="apple-touch-icon" href="img/logo.png">
+  
+  <!-- Google Fonts Preconnect para Máxima Nitidez -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Mr+De+Haviland&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js para Métricas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- SweetAlert2 para Modais e Alertas Elegantes -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Estilos Personalizados -->
+  <link rel="stylesheet" href="css/custom.css">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Arial', 'Helvetica', 'sans-serif'],
+            serif: ['Arial', 'Helvetica', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              200: '#fbcfe8',
+              500: '#ec4899',
+              600: '#db2777',
+              700: '#be185d',
+              800: '#9d174d',
+              900: '#831843',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-pink-500 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- NAVBAR / CABEÇALHO CENTRALIZADO            -->
+  <!-- ========================================== -->
+  <header class="glass-nav border-b border-slate-300 shadow-sm relative py-5 sm:py-6 bg-[#e2e8f0]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative flex flex-col items-center justify-center text-center">
+      
+      <!-- Ações da Barra de Navegação (Rastrear e Carrinho nos cantos) -->
+      <div class="absolute right-4 top-4 sm:right-6 sm:top-5 flex items-center gap-2 sm:gap-3">
+        
+        <!-- Rastrear Pedido (Cliente) -->
+        <button onclick="App.openTrackOrderModal()" class="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-pink-600 bg-white/90 hover:bg-white border border-slate-300 px-3.5 py-2 rounded-xl transition shadow-sm">
+          <i data-lucide="search" class="w-4 h-4 text-pink-600"></i> Rastrear Pedido
+        </button>
+
+        <!-- Botão Carrinho de Compras -->
+        <button onclick="App.toggleCartDrawer(true)" class="relative p-2.5 bg-white hover:bg-pink-50 text-pink-700 rounded-xl transition border border-slate-300 shadow-sm flex items-center gap-2">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span class="hidden sm:inline text-xs font-bold">Minha Encomenda</span>
+          <span class="cart-count-badge hidden absolute -top-1.5 -right-1.5 bg-pink-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
+            0
+          </span>
+        </button>
+
+      </div>
+
+      <!-- Logotipo & Nome Centralizados (Logo ACIMA das Letras - Sem bordas) -->
+      <a href="#" class="flex flex-col items-center justify-center group">
+        <img src="img/logo.png" alt="J&L Brigadeiros" class="brand-logo-img w-20 h-20 sm:w-24 sm:h-24 object-contain group-hover:scale-105 transition duration-300 mb-1.5">
+        <div>
+          <span class="header-brand-title text-3xl sm:text-4xl md:text-5xl font-normal leading-tight block store-name-text select-none text-[#3b1909]">
+            J&L Brigadeiros
+          </span>
+          <div class="flex items-center justify-center gap-2 mt-0.5">
+            <span class="inline-block w-4 sm:w-8 h-[1px] bg-[#5c2d1a]/35"></span>
+            <p class="header-subtitle-menu text-xs sm:text-sm md:text-[14px]">Doces Artesanais</p>
+            <span class="inline-block w-4 sm:w-8 h-[1px] bg-[#5c2d1a]/35"></span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- SEÇÃO DO CLIENTE (VITRINE & ENCOMENDAS)    -->
+  <!-- ========================================== -->
+  <main id="client-section" class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+
+    <!-- Seção de Filtros por Categoria -->
+    <div id="catalogo" class="flex items-center justify-between flex-wrap gap-4 mb-6">
+      <div>
+        <h2 class="font-bold text-2xl sm:text-3xl text-[#451a03]">Cardápio de Encomendas</h2>
+        <p class="text-slate-600 text-sm">Selecione o tipo de doce desejado para personalizar sua caixa</p>
+      </div>
+
+      <!-- Botões de Categorias -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 max-w-full">
+        <button data-category="all" class="category-btn bg-pink-600 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Todos os Doces
+        </button>
+        <button data-category="tradicional" class="category-btn bg-white text-pink-900 border border-pink-200 hover:border-pink-300 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="cake" class="w-3.5 h-3.5 text-pink-500"></i> Tradicionais
+        </button>
+        <button data-category="especial" class="category-btn bg-white text-pink-900 border border-pink-200 hover:border-pink-300 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="star" class="w-3.5 h-3.5 text-purple-500"></i> Especiais (2 Sabores)
+        </button>
+        <button data-category="tematico" class="category-btn bg-white text-pink-900 border border-pink-200 hover:border-pink-300 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="party-popper" class="w-3.5 h-3.5 text-blue-500"></i> Temáticos
+        </button>
+        <button data-category="carimbo" class="category-btn bg-white text-pink-900 border border-pink-200 hover:border-pink-300 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+          <i data-lucide="stamp" class="w-3.5 h-3.5 text-amber-500"></i> Carimbados
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid de Produtos / Doces -->
+    <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Injetado via App.renderProducts() -->
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ESPAÇO DO CLIENTE: DICAS & RECLAMAÇÕES (COMPACTO) -->
+    <!-- ========================================== -->
+    <div class="mt-8 mb-4 bg-white/90 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-pink-200 shadow-sm max-w-lg mx-auto">
+      <div class="flex items-center justify-between gap-2 mb-2 pb-1.5 border-b border-pink-100">
+        <div class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+          <i data-lucide="message-square-heart" class="w-4 h-4 text-pink-600"></i>
+          <span>Dicas, Sugestões ou Reclamações</span>
+        </div>
+        <span class="text-[10px] text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full font-medium border border-pink-100">Canal Aberto</span>
+      </div>
+
+      <form id="feedback-form" onsubmit="App.submitFeedback(event)" class="space-y-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <div>
+            <select id="feedback-type" required class="w-full p-1.5 border border-pink-200 rounded-lg text-[11px] bg-pink-50/40 focus:ring-1 focus:ring-pink-400 focus:outline-none">
+              <option value="dica">💡 Dica / Sugestão</option>
+              <option value="elogio">⭐ Elogio ao Doce</option>
+              <option value="reclamacao">⚠️ Reclamação</option>
+              <option value="duvida">❓ Dúvida Geral</option>
+            </select>
+          </div>
+          <div>
+            <input id="feedback-name" type="text" placeholder="Seu nome / WhatsApp (opcional)" class="w-full p-1.5 border border-pink-200 rounded-lg text-[11px] focus:ring-1 focus:ring-pink-400 focus:outline-none">
+            <input id="feedback-contact" type="hidden" value="">
+          </div>
+        </div>
+
+        <div class="flex gap-1.5">
+          <input id="feedback-message" required type="text" placeholder="Escreva sua dica, sugestão ou reclamação..." class="flex-1 p-2 border border-pink-200 rounded-lg text-xs focus:ring-1 focus:ring-pink-400 focus:outline-none">
+          <button type="submit" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg shadow transition flex items-center gap-1 flex-shrink-0">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Enviar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DEPOIMENTOS & EXPERIÊNCIAS DE CLIENTES     -->
+    <!-- ========================================== -->
+    <section class="mt-14 mb-8">
+      <div class="text-center max-w-xl mx-auto mb-8">
+        <div class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 text-xs font-bold px-3.5 py-1 rounded-full mb-2 border border-rose-200 shadow-sm">
+          <i data-lucide="heart" class="w-3.5 h-3.5 fill-rose-500 text-rose-500"></i>
+          <span>Satisfação dos Clientes</span>
+        </div>
+        <h2 class="font-bold text-2xl sm:text-3xl text-[#451a03] font-serif">O que Nossos Clientes Dizem</h2>
+        <p class="text-slate-600 text-xs sm:text-sm mt-1">Centenas de festas, datas comemorativas e momentos especiais adoçados com muito amor.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- Depoimento 1 -->
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 border border-pink-200 shadow-sm card-hover flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute -top-3 -right-3 text-pink-100/70 select-none pointer-events-none font-serif text-8xl leading-none">“</div>
+          <div>
+            <!-- Medida de Satisfação: 5 Corações -->
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-1 text-rose-500">
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+              </div>
+              <span class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                5/5 Corações
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed italic mb-4">
+              "Os brigadeiros no carimbo foram o maior sucesso no chá de bebê da minha filha! Todo mundo elogiou a delicadeza dos detalhes e o sabor é simplesmente perfeito, super macio e fresco. Recomendo de olhos fechados!"
+            </p>
+          </div>
+          <div class="flex items-center gap-3 pt-3 border-t border-pink-100">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 text-white font-bold flex items-center justify-center text-sm shadow-md">
+              CM
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-800">Camila Medeiros</h4>
+              <p class="text-[11px] text-pink-600 font-medium">Doces no Carimbo • Chá de Bebê</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Depoimento 2 -->
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 border border-pink-200 shadow-sm card-hover flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute -top-3 -right-3 text-pink-100/70 select-none pointer-events-none font-serif text-8xl leading-none">“</div>
+          <div>
+            <!-- Medida de Satisfação: 5 Corações -->
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-1 text-rose-500">
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+              </div>
+              <span class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                5/5 Corações
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed italic mb-4">
+              "Encomendei os brigadeiros especiais e tradicionais para a festa de 15 anos. Chegaram super pontuais através do Uber, muito bem embalados e impecáveis. Não sobrou nenhum!"
+            </p>
+          </div>
+          <div class="flex items-center gap-3 pt-3 border-t border-pink-100">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 text-white font-bold flex items-center justify-center text-sm shadow-md">
+              RA
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-800">Renata Albuquerque</h4>
+              <p class="text-[11px] text-pink-600 font-medium">Brigadeiros Especiais • 15 Anos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Depoimento 3 -->
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 border border-pink-200 shadow-sm card-hover flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute -top-3 -right-3 text-pink-100/70 select-none pointer-events-none font-serif text-8xl leading-none">“</div>
+          <div>
+            <!-- Medida de Satisfação: 5 Corações -->
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-1 text-rose-500">
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+                <i data-lucide="heart" class="w-4 h-4 fill-rose-500 text-rose-500"></i>
+              </div>
+              <span class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                5/5 Corações
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed italic mb-4">
+              "Os brigadeiros temáticos do Homem-Aranha e Vingadores superaram todas as expectativas no aniversário do meu filho. As cores e o acabamento estavam lindos e o sabor é incomparável!"
+            </p>
+          </div>
+          <div class="flex items-center gap-3 pt-3 border-t border-pink-100">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 text-white font-bold flex items-center justify-center text-sm shadow-md">
+              GS
+            </div>
+            <div>
+              <h4 class="font-bold text-xs sm:text-sm text-slate-800">Gustavo Santos</h4>
+              <p class="text-[11px] text-pink-600 font-medium">Brigadeiros Temáticos • Festa Infantil</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- SEÇÃO DO PAINEL ADMINISTRATIVO             -->
+  <!-- ========================================== -->
+  <section id="admin-section" class="hidden flex-1 bg-slate-100 min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Cabeçalho do Admin -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="img/logo.png" alt="J&L Brigadeiros" class="w-14 h-14 object-cover rounded-full shadow border-2 border-pink-200">
+          <div>
+            <h2 class="font-bold text-xl text-slate-800 flex items-center gap-2">
+              Painel de Gestão & Produção
+              <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-md">Online</span>
+            </h2>
+            <p class="text-xs text-slate-500">Gerenciamento de encomendas, clientes, catálogo e agenda de entregas</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="App.exitAdminPanel()" class="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-4 py-2.5 rounded-xl transition shadow-sm">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Sair do Painel (Logout)
+          </button>
+        </div>
+      </div>
+
+      <!-- Abas de Navegação do Painel -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6">
+        <button data-tab="dashboard" onclick="App.setAdminTab('dashboard')" class="admin-tab-btn bg-pink-600 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm whitespace-nowrap">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Visão Geral & Métricas
+        </button>
+        <button data-tab="kanban" onclick="App.setAdminTab('kanban')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="trello" class="w-4 h-4"></i> Produção (Kanban)
+        </button>
+        <button data-tab="orders" onclick="App.setAdminTab('orders')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="list-ordered" class="w-4 h-4"></i> Todos os Pedidos
+        </button>
+        <button data-tab="products" onclick="App.setAdminTab('products')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="candy" class="w-4 h-4"></i> Produtos & Preços
+        </button>
+        <button data-tab="calendar" onclick="App.setAdminTab('calendar')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="calendar" class="w-4 h-4"></i> Agenda de Entregas
+        </button>
+        <button data-tab="settings" onclick="App.setAdminTab('settings')" class="admin-tab-btn text-slate-600 hover:bg-pink-50 font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="settings" class="w-4 h-4"></i> Configurações & Backup
+        </button>
+      </div>
+
+      <!-- ABA 1: DASHBOARD / KPIS -->
+      <div id="admin-tab-dashboard" class="admin-tab-content space-y-6">
+        
+        <!-- Cards de Métricas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="text-xs text-slate-500 font-semibold uppercase">Faturamento Total</div>
+            <div id="kpi-total-revenue" class="text-2xl font-bold text-slate-800 mt-1">R$ 0,00</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="text-xs text-slate-500 font-semibold uppercase">Total de Encomendas</div>
+            <div id="kpi-total-orders" class="text-2xl font-bold text-slate-800 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="text-xs text-slate-500 font-semibold uppercase">Ticket Médio</div>
+            <div id="kpi-avg-ticket" class="text-2xl font-bold text-slate-800 mt-1">R$ 0,00</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+            <div class="text-xs text-amber-800 font-semibold uppercase">⏳ Pendentes</div>
+            <div id="kpi-pending-orders" class="text-2xl font-bold text-amber-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-pink-200 shadow-sm bg-pink-50/40">
+            <div class="text-xs text-pink-800 font-semibold uppercase">🥣 Em Produção</div>
+            <div id="kpi-prod-orders" class="text-2xl font-bold text-pink-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/40">
+            <div class="text-xs text-purple-800 font-semibold uppercase">🎁 Prontos / Entrega</div>
+            <div id="kpi-ready-orders" class="text-2xl font-bold text-purple-900 mt-1">0</div>
+          </div>
+        </div>
+
+        <!-- Gráfico e Pedidos Recentes -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <h3 class="font-bold text-base text-slate-800 mb-4 flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-pink-600"></i> Doces Mais Pedidos (Unidades)
+            </h3>
+            <div class="relative h-64 flex items-center justify-center">
+              <canvas id="admin-products-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-pink-600"></i> Últimas Encomendas Recebidas
+              </h3>
+              <button onclick="App.setAdminTab('orders')" class="text-xs font-bold text-pink-600 hover:underline">Ver Todos</button>
+            </div>
+            <div id="admin-recent-orders-list" class="space-y-2.5">
+              <!-- Injetado via App.renderAdminDashboard() -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ABA 2: KANBAN DE PRODUÇÃO -->
+      <div id="admin-tab-kanban" class="admin-tab-content hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          
+          <!-- Coluna Pendente -->
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-amber-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>⏳ Pendentes</span>
+            </div>
+            <div id="kanban-col-pendente" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <!-- Coluna Confirmado -->
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-sky-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>✅ Confirmados</span>
+            </div>
+            <div id="kanban-col-confirmado" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <!-- Coluna Em Produção -->
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-pink-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>🥣 Em Produção</span>
+            </div>
+            <div id="kanban-col-producao" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <!-- Coluna Pronto -->
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-purple-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>🎁 Pronto / Saiu</span>
+            </div>
+            <div id="kanban-col-pronto" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+          <!-- Coluna Finalizado -->
+          <div class="bg-slate-200/70 p-3.5 rounded-2xl border border-slate-300/80 flex flex-col">
+            <div class="flex items-center justify-between font-bold text-xs text-emerald-900 uppercase pb-2 mb-3 border-b border-slate-300">
+              <span>🎉 Finalizados</span>
+            </div>
+            <div id="kanban-col-finalizado" class="space-y-3 flex-1 overflow-y-auto max-h-[70vh]"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ABA 3: TABELA DE PEDIDOS -->
+      <div id="admin-tab-orders" class="admin-tab-content hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          
+          <!-- Filtros de Busca -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <div class="flex items-center gap-2 flex-1 max-w-md">
+              <input id="orders-search-input" oninput="App.renderAdminOrdersTable()" type="text" placeholder="Buscar por código, cliente ou telefone..." class="w-full text-xs p-2.5 border border-slate-300 rounded-xl">
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-semibold text-slate-600">Status:</label>
+              <select id="orders-filter-status" onchange="App.renderAdminOrdersTable()" class="text-xs p-2.5 border border-slate-300 rounded-xl bg-white">
+                <option value="all">Todos os Status</option>
+                <option value="pendente">Pendente</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="producao">Em Produção</option>
+                <option value="pronto">Pronto</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tabela Responsiva -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-500 font-bold text-xs uppercase bg-slate-50">
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Entrega / Evento</th>
+                  <th class="p-3">Doces</th>
+                  <th class="p-3">Total & Pagto</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-table-body">
+                <!-- Injetado via App.renderAdminOrdersTable() -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ABA 4: GESTÃO DE PRODUTOS & PREÇOS -->
+      <div id="admin-tab-products" class="admin-tab-content hidden space-y-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-lg text-slate-800">Catálogo e Tabela de Preços</h3>
+            <p class="text-xs text-slate-500">Configure os valores para 50 unidades, 100 unidades e disponibilidade de cada doce</p>
+          </div>
+        </div>
+
+        <div id="admin-products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Injetado via App.renderAdminProducts() -->
+        </div>
+      </div>
+
+      <!-- ABA 5: AGENDA DE ENTREGAS -->
+      <div id="admin-tab-calendar" class="admin-tab-content hidden space-y-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-lg text-slate-800">Agenda de Encomendas & Produção</h3>
+          <p class="text-xs text-slate-500">Visualização de eventos agrupados por data para planejamento antecipado dos doces</p>
+        </div>
+
+        <div id="admin-calendar-view" class="space-y-4">
+          <!-- Injetado via App.renderAdminCalendar() -->
+        </div>
+      </div>
+
+      <!-- ABA 6: CONFIGURAÇÕES & BACKUP -->
+      <div id="admin-tab-settings" class="admin-tab-content hidden space-y-6">
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-lg text-slate-800 mb-4 pb-2 border-b border-slate-100">Configurações da Loja</h3>
+          
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1 text-xs">Nome da Confeitaria:</label>
+              <input id="setting-store-name" type="text" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1 text-xs">Slogan / Descrição Curta:</label>
+              <input id="setting-slogan" type="text" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1 text-xs">WhatsApp para Receber Encomendas (com DDD):</label>
+                <input id="setting-whatsapp" type="text" placeholder="Ex: 5511999999999" class="w-full p-2.5 border rounded-xl">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1 text-xs">Chave Pix da Loja:</label>
+                <input id="setting-pix-key" type="text" class="w-full p-2.5 border rounded-xl">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1 text-xs">Taxa Padrão de Entrega (R$):</label>
+                <input id="setting-delivery-fee" type="number" step="0.50" class="w-full p-2.5 border rounded-xl">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1 text-xs">Mínimo de Dias de Antecedência:</label>
+                <input id="setting-min-days" type="number" class="w-full p-2.5 border rounded-xl">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1 text-xs">PIN de Acesso do Admin:</label>
+                <input id="setting-admin-pin" type="text" class="w-full p-2.5 border rounded-xl font-mono">
+              </div>
+            </div>
+
+            <button onclick="App.saveAdminSettings()" class="mt-4 w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl transition shadow">
+              Salvar Configurações
+            </button>
+          </div>
+        </div>
+
+        <!-- Backup e Restauração -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm max-w-2xl">
+          <h3 class="font-bold text-lg text-slate-800 mb-2">Backup dos Dados</h3>
+          <p class="text-xs text-slate-500 mb-4">Exporte uma cópia de segurança de todos os pedidos e produtos ou restaure os dados padrão.</p>
+
+          <div class="flex flex-wrap gap-3">
+            <button onclick="App.exportBackup()" class="bg-slate-800 hover:bg-black text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
+              <i data-lucide="download" class="w-4 h-4"></i> Exportar Backup (JSON)
+            </button>
+            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="upload" class="w-4 h-4"></i> Importar Backup
+              <input type="file" accept=".json" onchange="App.importBackupFile(event)" class="hidden">
+            </label>
+            <button onclick="App.resetStoreData()" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> Restaurar Dados Originais
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE PERSONALIZAÇÃO DO DOCE            -->
+  <!-- ========================================== -->
+  <div id="customize-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[#faf5ee] rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#ebdccb] flex flex-col">
+      
+      <!-- Cabeçalho do Modal -->
+      <div class="relative h-48 sm:h-56 overflow-hidden flex-shrink-0 cursor-pointer group" onclick="App.openImageLightbox(App.currentCustomizingProduct?.id)" title="Clique para ampliar a imagem">
+        <img id="modal-product-img" src="" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+        <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+          <span class="bg-black/70 backdrop-blur-md text-white text-xs font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+            <i data-lucide="zoom-in" class="w-4 h-4 text-pink-400"></i> Clique para Ampliar
+          </span>
+        </div>
+        <button onclick="event.stopPropagation(); App.closeCustomizeModal()" class="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full p-2 transition z-10">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 id="modal-product-title" class="font-serif font-bold text-2xl text-slate-800 mb-1">Título do Doce</h3>
+          <p id="modal-product-desc" class="text-xs text-slate-500 mb-5">Descrição do produto</p>
+
+          <!-- Seletor de Quantidade (50 ou 100 unidades) -->
+          <div class="mb-6">
+            <label class="block font-bold text-slate-800 text-sm mb-2">Selecione a Quantidade:</label>
+            <div class="grid grid-cols-2 gap-3">
+              <button type="button" data-qty="50" onclick="App.setModalQuantity(50)" class="qty-preset-btn p-3.5 rounded-2xl border-2 font-bold text-sm text-center transition flex flex-col items-center bg-pink-600 text-white border-pink-600 shadow-sm">
+                <span class="text-lg">50 Unidades</span>
+                <span class="text-xs font-normal opacity-90">Ideal para pequenas reuniões</span>
+              </button>
+              <button type="button" data-qty="100" onclick="App.setModalQuantity(100)" class="qty-preset-btn p-3.5 rounded-2xl border-2 font-bold text-sm text-center transition flex flex-col items-center bg-white text-slate-700 border-slate-200 hover:border-pink-300">
+                <span class="text-lg">100 Unidades (Cento)</span>
+                <span class="text-xs font-normal text-emerald-600 font-semibold">Melhor custo por unidade!</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Campos dinâmicos (Sabores, Carimbos, Temas) -->
+          <div id="modal-customizer-fields">
+            <!-- Injetado via App.renderCustomizerOptions() -->
+          </div>
+        </div>
+
+        <!-- Rodapé do Modal com Preço e Ação -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-4 mt-4">
+          <div>
+            <div class="text-xs text-slate-500">Valor do Item:</div>
+            <div id="modal-total-price" class="text-2xl font-bold text-pink-700">R$ 0,00</div>
+          </div>
+          <button onclick="App.confirmAddToCart()" class="flex-1 bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-700 hover:to-rose-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition flex items-center justify-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i> Adicionar à Encomenda
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- GAVETA LATERAL DO CARRINHO (CART DRAWER)   -->
+  <!-- ========================================== -->
+  <div id="cart-drawer-backdrop" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden transition-opacity"></div>
+  
+  <div id="cart-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-slate-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+    
+    <!-- Topo do Carrinho -->
+    <div class="p-5 bg-white border-b border-pink-100 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="p-2 bg-pink-100 text-pink-600 rounded-xl">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg text-slate-800">Sua Encomenda</h3>
+          <p class="text-xs text-slate-500">Revise seus doces antes de finalizar</p>
+        </div>
+      </div>
+      <button onclick="App.toggleCartDrawer(false)" class="p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-xl transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Lista de Itens -->
+    <div id="cart-items-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+      <!-- Injetado via App.renderCartItems() -->
+    </div>
+
+    <!-- Estado Vazio -->
+    <div id="cart-empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400">
+      <i data-lucide="shopping-cart" class="w-16 h-16 text-pink-200 mb-3"></i>
+      <h4 class="font-bold text-slate-700 text-base mb-1">Seu carrinho está vazio</h4>
+      <p class="text-xs text-slate-500 mb-4">Escolha os deliciosos brigadeiros do nosso cardápio para começar!</p>
+      <button onclick="App.toggleCartDrawer(false)" class="bg-pink-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">
+        Ver Cardápio
+      </button>
+    </div>
+
+    <!-- Rodapé do Carrinho -->
+    <div id="cart-footer" class="p-5 bg-white border-t border-slate-200 space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-sm text-slate-600 font-medium">Subtotal dos Doces:</span>
+        <span id="cart-subtotal-price" class="text-xl font-bold text-pink-700">R$ 0,00</span>
+      </div>
+      <button onclick="App.openCheckoutModal()" class="w-full bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-700 hover:to-rose-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2">
+        <span>Avançar para Entrega e Pagamento</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE CHECKOUT                          -->
+  <!-- ========================================== -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-pink-100 flex flex-col">
+      
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 bg-pink-100 text-pink-600 rounded-xl">
+            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-slate-800">Finalizar Encomenda</h3>
+            <p class="text-xs text-slate-500">Preencha os dados de entrega para agendamento</p>
+          </div>
+        </div>
+        <button onclick="App.closeCheckoutModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 text-sm">
+        
+        <!-- Dados Pessoais -->
+        <div>
+          <h4 class="font-bold text-slate-800 text-xs uppercase mb-3 text-pink-700">1. Seus Dados de Contato</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Nome Completo *</label>
+              <input id="checkout-name" type="text" placeholder="Seu nome" class="w-full p-2.5 border rounded-xl text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">WhatsApp / Telefone *</label>
+              <input id="checkout-phone" type="text" placeholder="(11) 99999-9999" class="w-full p-2.5 border rounded-xl text-xs">
+            </div>
+          </div>
+        </div>
+
+        <!-- Data do Evento e Entrega -->
+        <div>
+          <h4 class="font-bold text-slate-800 text-xs uppercase mb-3 text-pink-700">2. Agendamento da Encomenda</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Data do Evento / Retirada *</label>
+              <input id="checkout-event-date" type="date" class="w-full p-2.5 border rounded-xl text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Horário Desejado *</label>
+              <input id="checkout-event-time" type="time" value="14:00" class="w-full p-2.5 border rounded-xl text-xs">
+            </div>
+          </div>
+
+          <!-- Tipo de Entrega -->
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer bg-slate-50">
+              <input type="radio" name="delivery-type" value="pickup" checked onchange="App.handleDeliveryTypeChange('pickup')" class="text-pink-600">
+              <span class="text-xs font-bold text-slate-700">🏪 Retirada no Local</span>
+            </label>
+            <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer bg-slate-50">
+              <input type="radio" name="delivery-type" value="delivery" onchange="App.handleDeliveryTypeChange('delivery')" class="text-pink-600">
+              <span class="text-xs font-bold text-slate-700">🚚 Entrega a Domicílio</span>
+            </label>
+          </div>
+
+          <!-- Endereço para entrega e Aviso de Uber -->
+          <div id="delivery-address-container" class="hidden space-y-2.5">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Endereço Completo de Entrega (Rua, Número, Bairro, Complemento):</label>
+              <input id="checkout-address" type="text" placeholder="Ex: Rua das Rosas, 100 - Bairro Centro" class="w-full p-2.5 border rounded-xl text-xs">
+            </div>
+
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-start gap-2.5 text-xs text-amber-900 shadow-sm">
+              <i data-lucide="car" class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"></i>
+              <div>
+                <strong>Aviso de Entrega:</strong>
+                <p class="text-[11px] text-amber-800 mt-0.5">As entregas são realizadas através de <strong>Uber / Uber Entregas</strong> para garantir agilidade e cuidado no transporte dos seus doces.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Forma de Pagamento -->
+        <div>
+          <h4 class="font-bold text-slate-800 text-xs uppercase mb-3 text-pink-700">3. Forma de Pagamento</h4>
+          <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
+              <input type="radio" name="payment-method" value="pix" checked class="mb-1 text-pink-600">
+              <span>💠 Pix</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
+              <input type="radio" name="payment-method" value="cartao" class="mb-1 text-pink-600">
+              <span>💳 Cartão</span>
+            </label>
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
+              <input type="radio" name="payment-method" value="dinheiro" class="mb-1 text-pink-600">
+              <span>💵 Dinheiro</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Observações Gerais -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Observações Adicionais (opcional):</label>
+          <input id="checkout-notes" type="text" placeholder="Ex: Avisar quando sair para entrega, nome do aniversariante..." class="w-full p-2.5 border rounded-xl text-xs">
+        </div>
+
+        <!-- Resumo Financeiro -->
+        <div class="bg-pink-50/70 p-4 rounded-2xl border border-pink-100 space-y-1.5 text-xs">
+          <div class="flex justify-between text-slate-600">
+            <span>Subtotal Doces:</span>
+            <span id="checkout-summary-subtotal" class="font-bold">R$ 0,00</span>
+          </div>
+          <div id="checkout-fee-row" class="flex justify-between text-slate-600 hidden">
+            <span>Taxa de Entrega:</span>
+            <span id="checkout-summary-fee" class="font-bold">R$ 0,00</span>
+          </div>
+          <div class="flex justify-between text-base font-bold text-pink-700 pt-2 border-t border-pink-200">
+            <span>Valor Total:</span>
+            <span id="checkout-summary-total">R$ 0,00</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-6 border-t border-slate-100 bg-slate-50 flex gap-3">
+        <button onclick="App.closeCheckoutModal()" class="w-1/3 py-3 rounded-xl border border-slate-300 font-bold text-xs text-slate-700 hover:bg-slate-100">
+          Voltar
+        </button>
+        <button onclick="App.submitOrder()" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs">
+          <i data-lucide="check-circle" class="w-4 h-4"></i> Confirmar & Enviar Pedido
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE SUCESSO DO PEDIDO (WHATSAPP)      -->
+  <!-- ========================================== -->
+  <div id="order-success-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border border-pink-100 space-y-4">
+      
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+
+      <h3 class="font-serif font-bold text-2xl text-slate-800">Pedido Realizado com Sucesso!</h3>
+      
+      <div class="bg-pink-50 p-4 rounded-2xl border border-pink-100 text-xs space-y-1">
+        <div>Código de Acompanhamento:</div>
+        <div id="success-order-id" class="text-xl font-bold text-pink-700 tracking-wider">JEL-XXXX</div>
+        <div class="text-slate-500 pt-1">Total: <span id="success-order-total" class="font-bold text-slate-800">R$ 0,00</span></div>
+      </div>
+
+      <p class="text-xs text-slate-600 leading-relaxed">
+        Clique no botão abaixo para enviar os detalhes da sua encomenda direto para o <strong>WhatsApp da JeL Doces</strong> para confirmação rápida!
+      </p>
+
+      <div class="space-y-2 pt-2">
+        <a id="success-whatsapp-btn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
+          <i data-lucide="message-circle" class="w-5 h-5"></i> Enviar Detalhes no WhatsApp
+        </a>
+        <button onclick="App.closeOrderSuccessModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl">
+          Concluir e Voltar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE RASTREIO DE PEDIDOS               -->
+  <!-- ========================================== -->
+  <div id="track-order-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-pink-100 space-y-4">
+      
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+          <i data-lucide="search" class="w-5 h-5 text-pink-600"></i> Rastrear Encomenda
+        </h3>
+        <button onclick="App.closeTrackOrderModal()" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold text-slate-600">Digite o código do seu pedido (ex: JEL-8941):</label>
+        <div class="flex gap-2">
+          <input id="track-search-input" type="text" placeholder="JEL-XXXX" class="flex-1 uppercase font-bold p-2.5 border rounded-xl text-sm">
+          <button onclick="App.searchOrder()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <div id="track-result-container" class="hidden">
+        <!-- Injetado via App.searchOrder() -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE DETALHES DO PEDIDO (ADMIN)        -->
+  <!-- ========================================== -->
+  <div id="order-details-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="App.closeOrderDetailsModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-xl">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div id="order-details-content">
+        <!-- Injetado via App.openOrderDetailsModal() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE LOGIN ADMINISTRATIVO              -->
+  <!-- ========================================== -->
+  <div id="admin-login-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 sm:p-8 shadow-2xl border border-pink-100 relative animate-in fade-in zoom-in duration-200">
+      <button onclick="App.closeLoginModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-xl">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <img src="img/logo.png" alt="J&L Brigadeiros" class="w-20 h-20 object-cover rounded-full mx-auto mb-3 shadow-md border-2 border-pink-200">
+        <h3 class="font-bold text-2xl text-slate-800">Painel Administrativo</h3>
+        <p class="text-xs text-slate-500 mt-1">Acesso restrito para gestão de encomendas</p>
+      </div>
+
+      <form onsubmit="App.handleLoginForm(event)" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Usuário:</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input id="login-username" type="text" value="admin" required class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-pink-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Senha ou PIN de Acesso:</label>
+          <div class="relative">
+            <i data-lucide="key" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input id="login-pin" type="password" placeholder="Digite seu PIN (Padrão: 1234)" required class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-pink-500 focus:outline-none font-mono">
+          </div>
+        </div>
+
+        <div id="login-error-msg" class="hidden text-xs text-red-600 font-semibold bg-red-50 p-2.5 rounded-xl border border-red-200 text-center">
+          Senha ou PIN incorreto. Tente novamente.
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-700 hover:to-rose-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs">
+          <i data-lucide="log-in" class="w-4 h-4"></i> Fazer Login no Painel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL DE VISUALIZAÇÃO AMPLIADA DA IMAGEM   -->
+  <!-- ========================================== -->
+  <div id="image-lightbox-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 transition-all duration-300" onclick="App.closeImageLightbox()">
+    <div class="relative max-w-4xl w-full max-h-[95vh] flex flex-col items-center justify-center animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+      
+      <!-- Botão Fechar -->
+      <button onclick="App.closeImageLightbox()" class="absolute -top-12 right-0 sm:-top-12 sm:right-0 bg-white/20 hover:bg-white/40 text-white rounded-full p-2.5 backdrop-blur-md transition z-20 shadow-lg" title="Fechar visualização">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Imagem Ampliada -->
+      <div class="bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20 flex flex-col w-full max-h-[88vh]">
+        <div class="relative flex-1 bg-black/95 flex items-center justify-center overflow-hidden min-h-[300px] max-h-[70vh] p-2">
+          <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[68vh] object-contain rounded-xl select-none shadow-2xl">
+        </div>
+        
+        <!-- Legenda e Detalhes da Imagem -->
+        <div class="p-4 sm:p-5 bg-white flex flex-wrap items-center justify-between gap-3 border-t border-slate-100">
+          <div>
+            <h3 id="lightbox-title" class="font-bold text-xl text-slate-800">Nome do Doce</h3>
+            <p id="lightbox-desc" class="text-xs text-slate-600 mt-0.5 line-clamp-1">Descrição</p>
+          </div>
+          <div id="lightbox-price-badge" class="flex items-center gap-3 bg-pink-50 px-3.5 py-1.5 rounded-xl border border-pink-100 text-xs"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ÁREA OCULTA PARA IMPRESSÃO DE COMANDAS     -->
+  <!-- ========================================== -->
+  <div id="print-area" class="hidden"></div>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ DA LOJA                             -->
+  <!-- ========================================== -->
+  <footer class="bg-slate-900 text-white py-12 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="J&L Brigadeiros" class="w-12 h-12 object-cover rounded-full shadow border border-amber-900/40">
+        <div>
+          <span class="font-bold text-lg text-white store-name-text">J&L Brigadeiros</span>
+          <p class="text-xs text-slate-400 store-slogan-text">Doces artesanais de alta qualidade</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center sm:items-end gap-1 text-xs text-slate-400">
+        <p>© 2026 J&L Brigadeiros. Todos os direitos reservados.</p>
+        <p class="text-slate-500">Doces artesanais de alta qualidade</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- BARRA FLUTUANTE DE CARRINHO NO CELULAR     -->
+  <!-- ========================================== -->
+  <div id="mobile-floating-cart" class="sm:hidden fixed bottom-20 left-3 right-3 z-40 hidden animate-in slide-in-from-bottom-4 duration-300">
+    <button onclick="App.toggleCartDrawer(true)" class="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-2xl flex items-center justify-between border border-pink-300/40">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-white/20 p-1.5 rounded-xl">
+          <i data-lucide="shopping-bag" class="w-5 h-5 text-white"></i>
+        </div>
+        <div class="text-left">
+          <div class="text-xs font-bold leading-tight">Ver Minha Encomenda</div>
+          <span class="text-[11px] text-pink-100 font-normal"><span id="mobile-cart-items-count">0</span> itens adicionados</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span id="mobile-cart-total-price" class="font-bold text-base text-white">R$ 0,00</span>
+        <i data-lucide="chevron-right" class="w-5 h-5 text-pink-200"></i>
+      </div>
+    </button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA (MOBILE)  -->
+  <!-- ========================================== -->
+  <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-pink-100 px-4 py-2 flex items-center justify-around shadow-lg">
+    <a href="#catalogo" class="flex flex-col items-center gap-0.5 text-pink-600 font-bold text-[10px]">
+      <i data-lucide="candy" class="w-5 h-5"></i>
+      <span>Cardápio</span>
+    </a>
+    <button onclick="App.openTrackOrderModal()" class="flex flex-col items-center gap-0.5 text-slate-500 hover:text-pink-600 text-[10px]">
+      <i data-lucide="search" class="w-5 h-5"></i>
+      <span>Rastrear</span>
+    </button>
+    <button onclick="App.toggleCartDrawer(true)" class="relative flex flex-col items-center gap-0.5 text-slate-500 hover:text-pink-600 text-[10px]">
+      <div class="relative">
+        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        <span class="cart-count-badge hidden absolute -top-1.5 -right-2 bg-pink-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">
+          0
+        </span>
+      </div>
+      <span>Carrinho</span>
+    </button>
+    <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20tirar%20dúvidas%20sobre%20as%20encomendas%20da%20J%26L%20Brigadeiros!" target="_blank" class="flex flex-col items-center gap-0.5 text-emerald-600 text-[10px]">
+      <i data-lucide="message-circle" class="w-5 h-5"></i>
+      <span>WhatsApp</span>
+    </a>
+  </nav>
+
+  <!-- Scripts do Projeto -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
