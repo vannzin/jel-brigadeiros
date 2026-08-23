@@ -86,7 +86,7 @@ const INITIAL_DATA = {
       id: "prod-3",
       name: "Brigadeiros Temáticos para Festas",
       category: "tematico",
-      description: "Doces decorados no tema da sua comemoração. Forminhas especiais, confeitos e paleta de cores personalizada para aniversários, batizados e eventos.",
+      description: "Doces decorados no tema da sua comemoração. Forminhas especiais, confeitos e paleta de cores personalizada para aniversários, batizados e eventos. Sabor exclusivo: Ninho.",
       image: "img/brigadeiro_tematico.jpg",
       icon: "🎉",
       badge: "Festas & Eventos",
@@ -95,13 +95,9 @@ const INITIAL_DATA = {
         100: 230.00
       },
       hasFlavors: true,
-      maxFlavors: 2,
+      maxFlavors: 1,
       availableFlavors: [
-        "Tradicional ao Leite",
-        "Chocolate Branco Colorido",
-        "Ninho",
-        "Beijinho",
-        "Bicho de Pé"
+        "Ninho"
       ],
       hasCustomTheme: true,
       themePlaceholders: "Ex: Safari, Princesas, Fundo do Mar, Casamento, 15 anos, Cores Dourado e Rosa",

@@ -48,8 +48,11 @@ class Store {
           prod2.availableFlavors = INITIAL_DATA.products.find(p => p.id === "prod-2").availableFlavors;
         }
         const prod3 = (this.data.products || []).find(p => p.id === "prod-3");
-        if (prod3 && (!prod3.image || prod3.image.includes("unsplash"))) {
-          prod3.image = "img/brigadeiro_tematico.jpg";
+        if (prod3) {
+          if (!prod3.image || prod3.image.includes("unsplash")) prod3.image = "img/brigadeiro_tematico.jpg";
+          prod3.description = INITIAL_DATA.products.find(p => p.id === "prod-3").description;
+          prod3.maxFlavors = INITIAL_DATA.products.find(p => p.id === "prod-3").maxFlavors;
+          prod3.availableFlavors = INITIAL_DATA.products.find(p => p.id === "prod-3").availableFlavors;
         }
         const prod4 = (this.data.products || []).find(p => p.id === "prod-4");
         if (prod4 && (!prod4.image || prod4.image.includes("unsplash"))) {
