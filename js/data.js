@@ -108,7 +108,7 @@ const INITIAL_DATA = {
       id: "prod-4",
       name: "Doces Personalizados no Carimbo",
       category: "carimbo",
-      description: "Doces artesanais carimbados com palavras de afeto, iniciais, idades ou desenhos delicados. Um toque de sofisticação e exclusividade.",
+      description: "Doces artesanais carimbados com palavras de afeto, iniciais, idades ou desenhos delicados. Sabores disponíveis: Brigadeiro Liso, Ninho, Morango, Casadinho e Sensação.",
       image: "img/doces_carimbo.jpg",
       icon: "🏷️",
       badge: "Personalizado",
@@ -119,10 +119,11 @@ const INITIAL_DATA = {
       hasFlavors: true,
       maxFlavors: 2,
       availableFlavors: [
-        "Ninho Puro",
-        "Tradicional ao Leite",
-        "Doce de Leite com Canela",
-        "Chocolate 50% Cacau"
+        "Brigadeiro Liso",
+        "Ninho",
+        "Morango",
+        "Casadinho",
+        "Sensação"
       ],
       hasCustomTheme: false,
       hasStamp: true,
