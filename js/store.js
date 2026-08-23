@@ -36,6 +36,8 @@ class Store {
         if (prod1) {
           prod1.image = "img/brigadeiro_tradicional.jpg";
           prod1.description = INITIAL_DATA.products.find(p => p.id === "prod-1").description;
+          prod1.maxFlavors = INITIAL_DATA.products.find(p => p.id === "prod-1").maxFlavors;
+          prod1.maxFlavorsByQty = INITIAL_DATA.products.find(p => p.id === "prod-1").maxFlavorsByQty;
           prod1.availableFlavors = INITIAL_DATA.products.find(p => p.id === "prod-1").availableFlavors;
         }
         const prod2 = (this.data.products || []).find(p => p.id === "prod-2");

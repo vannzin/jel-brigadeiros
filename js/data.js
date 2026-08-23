@@ -31,7 +31,7 @@ const INITIAL_DATA = {
       id: "prod-1",
       name: "Brigadeiro Tradicional",
       category: "tradicional",
-      description: "Brigadeiros tradicionais irresistíveis. Sabores disponíveis: Chocolate, Morango, Cajuzinho, Coco e Ninho.",
+      description: "Brigadeiros tradicionais irresistíveis (50 un: até 2 sabores | 100 un: até 4 sabores). Sabores disponíveis: Chocolate, Morango, Cajuzinho, Coco e Ninho.",
       image: "img/brigadeiro_tradicional.jpg",
       icon: "🍫",
       badge: "Mais Vendido",
@@ -40,7 +40,11 @@ const INITIAL_DATA = {
         100: 140.00
       },
       hasFlavors: true,
-      maxFlavors: 1,
+      maxFlavors: 4,
+      maxFlavorsByQty: {
+        50: 2,
+        100: 4
+      },
       availableFlavors: [
         "Chocolate",
         "Morango",

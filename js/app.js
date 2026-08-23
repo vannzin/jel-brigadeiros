@@ -169,7 +169,7 @@ const App = {
 
             <!-- Tags de Recursos em tom rosa -->
             <div class="flex flex-wrap gap-1.5 mb-4 text-xs">
-              ${prod.maxFlavors > 1 ? `<span class="bg-pink-200 text-pink-900 border border-pink-300 px-2.5 py-0.5 rounded-md font-bold">✨ Até 2 Sabores</span>` : ''}
+              ${prod.id === 'prod-1' ? `<span class="bg-pink-200 text-pink-900 border border-pink-300 px-2.5 py-0.5 rounded-md font-bold">✨ 50un: até 2 sabores | 100un: até 4 sabores</span>` : (prod.maxFlavors > 1 ? `<span class="bg-pink-200 text-pink-900 border border-pink-300 px-2.5 py-0.5 rounded-md font-bold">✨ Até ${prod.maxFlavors} Sabores</span>` : '')}
               ${prod.hasStamp ? `<span class="bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-0.5 rounded-md font-bold">🏷️ Com Carimbo</span>` : ''}
               ${prod.hasCustomTheme ? `<span class="bg-blue-100 text-blue-900 border border-blue-200 px-2.5 py-0.5 rounded-md font-bold">🎉 Personalizado p/ Festa</span>` : ''}
             </div>
@@ -190,6 +190,18 @@ const App = {
   // ==========================================
   // MODAL DE PERSONALIZAÇÃO
   // ==========================================
+
+  getMaxFlavorsForQuantity(prod, qty) {
+    if (!prod) return 1;
+    const quantity = qty || this.selectedQuantity || 50;
+    if (prod.maxFlavorsByQty && prod.maxFlavorsByQty[quantity]) {
+      return prod.maxFlavorsByQty[quantity];
+    }
+    if (prod.id === "prod-1") {
+      return quantity >= 100 ? 4 : 2;
+    }
+    return prod.maxFlavors || 2;
+  },
 
   openCustomizeModal(productId) {
     const product = window.store.getProductById(productId);
@@ -277,6 +289,15 @@ const App = {
     });
 
     this.updateModalPricing();
+
+    // Atualiza opções de sabores com o novo limite de acordo com a quantidade
+    if (this.currentCustomizingProduct && this.currentCustomizingProduct.hasFlavors) {
+      const maxAllowed = this.getMaxFlavorsForQuantity(this.currentCustomizingProduct, qty);
+      if (this.selectedFlavors.length > maxAllowed) {
+        this.selectedFlavors = this.selectedFlavors.slice(0, maxAllowed);
+      }
+      this.renderCustomizerOptions();
+    }
   },
 
   renderCustomizerOptions() {
@@ -288,22 +309,24 @@ const App = {
 
     // 1. Seletor de Sabores
     if (prod.hasFlavors && prod.availableFlavors && prod.availableFlavors.length > 0) {
-      const max = prod.maxFlavors || 1;
+      const max = this.getMaxFlavorsForQuantity(prod, this.selectedQuantity || 50);
       html += `
         <div class="mb-6">
           <div class="flex justify-between items-center mb-2">
             <label class="font-bold text-[#382012] text-sm">
-              Escolha os Sabores <span class="text-pink-600 font-normal">(Máximo: ${max} ${max > 1 ? 'sabores' : 'sabor'})</span>:
+              Escolha os Sabores <span class="text-pink-600 font-bold">(Máximo: ${max} ${max > 1 ? 'sabores' : 'sabor'} para ${this.selectedQuantity || 50} un)</span>:
             </label>
-            <span id="flavor-count-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#f2e8dc] text-[#5c3a21] border border-[#e5d5c2]">0/${max}</span>
+            <span id="flavor-count-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#f2e8dc] text-[#5c3a21] border border-[#e5d5c2]">${this.selectedFlavors.length}/${max}</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-52 overflow-y-auto p-2.5 bg-[#faf5ee] rounded-2xl border border-[#ebdccb]">
-            ${prod.availableFlavors.map((flavor, index) => `
-              <label class="flex items-center gap-3 p-3 rounded-xl border border-[#ebdccb] hover:border-pink-400 bg-[#fdfaf5] hover:bg-[#f5ede2] cursor-pointer transition select-none shadow-sm flavor-item-label">
-                <input type="checkbox" name="flavor" value="${flavor}" onchange="App.handleFlavorSelection(this, ${max})" class="w-4 h-4 text-pink-600 rounded border-slate-300 focus:ring-pink-500">
+            ${prod.availableFlavors.map((flavor) => {
+              const isChecked = this.selectedFlavors.includes(flavor);
+              return `
+              <label class="flex items-center gap-3 p-3 rounded-xl border ${isChecked ? 'border-pink-500 bg-pink-50/70' : 'border-[#ebdccb] bg-[#fdfaf5]'} hover:border-pink-400 hover:bg-[#f5ede2] cursor-pointer transition select-none shadow-sm flavor-item-label">
+                <input type="checkbox" name="flavor" value="${flavor}" ${isChecked ? 'checked' : ''} onchange="App.handleFlavorSelection(this, ${max})" class="w-4 h-4 text-pink-600 rounded border-slate-300 focus:ring-pink-500">
                 <span class="text-xs sm:text-sm font-semibold text-[#4a2e1b]">${flavor}</span>
               </label>
-            `).join("")}
+            `}).join("")}
           </div>
         </div>
       `;
@@ -355,7 +378,7 @@ const App = {
         Swal.fire({
           icon: 'info',
           title: 'Limite atingido',
-          text: `Você pode selecionar no máximo ${maxAllowed} ${maxAllowed > 1 ? 'sabores' : 'sabor'} para esta opção.`,
+          text: `Você pode selecionar no máximo ${maxAllowed} ${maxAllowed > 1 ? 'sabores' : 'sabor'} para ${this.selectedQuantity || 50} unidades.`,
           confirmButtonColor: '#db2777'
         });
         return;
@@ -389,12 +412,21 @@ const App = {
     const prod = this.currentCustomizingProduct;
     if (!prod) return;
 
-    const maxFlavors = prod.maxFlavors || 1;
+    const maxFlavors = this.getMaxFlavorsForQuantity(prod, this.selectedQuantity || 50);
     if (prod.hasFlavors && this.selectedFlavors.length === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'Selecione o sabor',
         text: `Por favor, selecione ao menos 1 sabor para continuar.`,
+        confirmButtonColor: '#db2777'
+      });
+      return;
+    }
+    if (prod.hasFlavors && this.selectedFlavors.length > maxFlavors) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Limite de sabores excedido',
+        text: `Para ${this.selectedQuantity || 50} unidades, você pode escolher até ${maxFlavors} sabores.`,
         confirmButtonColor: '#db2777'
       });
       return;
