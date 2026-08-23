@@ -1,5 +1,5 @@
 /* Estilos personalizados para J&L Brigadeiros */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Mr+De+Haviland&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Mr+De+Haviland&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Quicksand:wght@500;600;700&display=swap');
 
 :root {
   --font-body: Arial, Helvetica, sans-serif;
@@ -35,6 +35,16 @@ body, button, input, select, textarea, table, p, span, div, h1, h2, h3, h4, h5, 
   color: #5c2d1a !important;
   -webkit-font-smoothing: antialiased !important;
   text-rendering: optimizeLegibility !important;
+}
+
+.instagram-header-handle {
+  font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  color: #3b1909;
+  -webkit-font-smoothing: antialiased;
+  transition: all 0.2s ease;
 }
 
 .brand-logo-img {
