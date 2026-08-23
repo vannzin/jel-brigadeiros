@@ -12,6 +12,8 @@ const INITIAL_DATA = {
     pixReceiver: "J&L Brigadeiros Artesanais",
     defaultDeliveryFee: 10.00,
     minAdvanceDays: 2, // Mínimo de 2 dias de antecedência para encomendas
+    instagramUrl: "https://www.instagram.com/_brigadeiroos/",
+    instagramHandle: "@_brigadeiroos",
     adminPin: "1234", // PIN de acesso ao painel
     currency: "BRL"
   },

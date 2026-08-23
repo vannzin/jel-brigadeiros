@@ -23,6 +23,10 @@ class Store {
         if (this.data.settings.storeName === "JeL Doces & Confeitaria" || !this.data.settings.storeName) {
           this.data.settings.storeName = "J&L Brigadeiros";
         }
+        if (!this.data.settings.instagramUrl) {
+          this.data.settings.instagramUrl = "https://www.instagram.com/_brigadeiroos/";
+          this.data.settings.instagramHandle = "@_brigadeiroos";
+        }
         if (!this.data.products) this.data.products = INITIAL_DATA.products;
         // Atualizar imagens dos produtos para fotos locais
         const prod1 = (this.data.products || []).find(p => p.id === "prod-1");

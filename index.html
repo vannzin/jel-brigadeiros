@@ -64,9 +64,15 @@
   <header class="glass-nav border-b border-slate-300 shadow-sm relative py-5 sm:py-6 bg-[#e2e8f0]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative flex flex-col items-center justify-center text-center">
       
-      <!-- Ações da Barra de Navegação (Rastrear e Carrinho nos cantos) -->
+      <!-- Ações da Barra de Navegação (Instagram, Rastrear e Carrinho) -->
       <div class="absolute right-4 top-4 sm:right-6 sm:top-5 flex items-center gap-2 sm:gap-3">
         
+        <!-- Instagram Oficial -->
+        <a href="https://www.instagram.com/_brigadeiroos/" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-pink-700 hover:text-pink-800 bg-white/90 hover:bg-white border border-slate-300 px-3 py-2 rounded-xl transition shadow-sm group" title="Siga nosso Instagram">
+          <i data-lucide="instagram" class="w-4 h-4 text-pink-600 group-hover:scale-110 transition-transform"></i>
+          <span class="font-bold">@_brigadeiroos</span>
+        </a>
+
         <!-- Rastrear Pedido (Cliente) -->
         <button onclick="App.openTrackOrderModal()" class="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-pink-600 bg-white/90 hover:bg-white border border-slate-300 px-3.5 py-2 rounded-xl transition shadow-sm">
           <i data-lucide="search" class="w-4 h-4 text-pink-600"></i> Rastrear Pedido
@@ -855,12 +861,15 @@
       </div>
 
       <p class="text-xs text-slate-600 leading-relaxed">
-        Clique no botão abaixo para enviar os detalhes da sua encomenda direto para o <strong>WhatsApp da JeL Doces</strong> para confirmação rápida!
+        Clique no botão abaixo para enviar os detalhes da sua encomenda direto para o <strong>WhatsApp da J&L Brigadeiros</strong> para confirmação rápida!
       </p>
 
       <div class="space-y-2 pt-2">
         <a id="success-whatsapp-btn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
           <i data-lucide="message-circle" class="w-5 h-5"></i> Enviar Detalhes no WhatsApp
+        </a>
+        <a href="https://www.instagram.com/_brigadeiroos/" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-pink-50 to-rose-50 hover:bg-pink-100 text-pink-700 font-bold py-2.5 px-4 rounded-xl border border-pink-200 transition flex items-center justify-center gap-2 text-xs">
+          <i data-lucide="instagram" class="w-4 h-4 text-pink-600"></i> Seguir @_brigadeiroos no Instagram
         </a>
         <button onclick="App.closeOrderSuccessModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl">
           Concluir e Voltar
@@ -1008,6 +1017,17 @@
           <p class="text-xs text-slate-400 store-slogan-text">Doces artesanais de alta qualidade</p>
         </div>
       </div>
+
+      <!-- Link Instagram Oficial -->
+      <a href="https://www.instagram.com/_brigadeiroos/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-gradient-to-r from-pink-950/60 to-purple-950/60 hover:from-pink-900/80 hover:to-purple-900/80 border border-pink-500/30 hover:border-pink-400/60 px-4 py-2.5 rounded-2xl transition shadow-sm group">
+        <div class="p-2 bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 rounded-xl text-white shadow">
+          <i data-lucide="instagram" class="w-4 h-4"></i>
+        </div>
+        <div class="text-left">
+          <p class="text-[10px] text-pink-200">Siga nosso Instagram</p>
+          <span class="text-xs font-bold text-white group-hover:text-pink-300 transition">@_brigadeiroos</span>
+        </div>
+      </a>
 
       <div class="flex flex-col items-center sm:items-end gap-1 text-xs text-slate-400">
         <p>© 2026 J&L Brigadeiros. Todos os direitos reservados.</p>

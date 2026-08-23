@@ -714,6 +714,7 @@ const App = {
       msg += `\n🚗 *Aviso:* As entregas são realizadas através de *Uber / Uber Entregas*.\n`;
     }
     if (order.notes) msg += `📝 *Observações Gerais:* ${order.notes}\n`;
+    msg += `\n📸 *Instagram:* https://www.instagram.com/_brigadeiroos/\n`;
 
     const encodedMsg = encodeURIComponent(msg);
     whatsappBtn.href = `https://wa.me/${settings.whatsappNumber.replace(/\D/g, "")}?text=${encodedMsg}`;
