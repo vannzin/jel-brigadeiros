@@ -719,9 +719,35 @@ const App = {
     document.getElementById("success-order-id").textContent = order.id;
     document.getElementById("success-order-total").textContent = this.formatMoney(order.total);
     
+    const settings = window.store.getSettings();
+
+    // Configuração do Container Pix
+    const pixContainer = document.getElementById("success-pix-container");
+    const pixAmount = document.getElementById("success-pix-amount");
+    const pixKeyInput = document.getElementById("success-pix-key-input");
+    
+    if (order.paymentMethod === "pix" && pixContainer) {
+      pixContainer.classList.remove("hidden");
+      if (pixAmount) pixAmount.textContent = this.formatMoney(order.total);
+      if (pixKeyInput) pixKeyInput.value = settings.pixKey || "31992535455";
+    } else if (pixContainer) {
+      pixContainer.classList.add("hidden");
+    }
+
+    // Detalhes do Pedido
+    const detailsContainer = document.getElementById("success-order-summary-details");
+    if (detailsContainer) {
+      detailsContainer.innerHTML = `
+        <div><strong>👤 Cliente:</strong> ${order.customerName} (${order.customerPhone})</div>
+        <div><strong>📅 Data do Evento:</strong> ${this.formatDate(order.eventDate)} às ${order.eventTime}</div>
+        <div><strong>🚚 Entrega/Retirada:</strong> ${order.deliveryType === 'delivery' ? 'Entrega a Domicílio (🚗 via Uber)' : 'Retirada na Confeitaria'}</div>
+        ${order.deliveryAddress ? `<div class="text-[11px] text-slate-500 pl-4">📍 ${order.deliveryAddress}</div>` : ''}
+        <div><strong>💳 Pagamento:</strong> <span class="font-bold text-pink-700 uppercase">${order.paymentMethod}</span></div>
+      `;
+    }
+    
     // Gerador de Mensagem do WhatsApp
     const whatsappBtn = document.getElementById("success-whatsapp-btn");
-    const settings = window.store.getSettings();
     
     let msg = `✨ *NOVO PEDIDO - ${order.id}* ✨\n\n`;
     msg += `👤 *Cliente:* ${order.customerName}\n`;
@@ -753,6 +779,34 @@ const App = {
 
     modal.classList.remove("hidden");
     modal.classList.add("flex");
+    lucide.createIcons();
+  },
+
+  copySuccessPixKey() {
+    const pixInput = document.getElementById("success-pix-key-input");
+    if (!pixInput) return;
+    navigator.clipboard.writeText(pixInput.value).then(() => {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Chave Pix copiada!',
+        text: 'Cole no app do seu banco para pagar.',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }).catch(() => {
+      pixInput.select();
+      document.execCommand('copy');
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Chave Pix copiada!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    });
   },
 
   closeOrderSuccessModal() {

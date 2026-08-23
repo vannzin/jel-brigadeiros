@@ -26,6 +26,10 @@ class Store {
         if (!this.data.settings.whatsappNumber || this.data.settings.whatsappNumber === "5511999999999") {
           this.data.settings.whatsappNumber = "5531992535455";
         }
+        if (!this.data.settings.pixKey || this.data.settings.pixKey === "jl.brigadeiros@exemplo.com") {
+          this.data.settings.pixKey = "31992535455";
+          this.data.settings.pixKeyType = "Celular / WhatsApp";
+        }
         if (!this.data.settings.instagramUrl) {
           this.data.settings.instagramUrl = "https://www.instagram.com/_brigadeiroos/";
           this.data.settings.instagramHandle = "@_brigadeiroos";

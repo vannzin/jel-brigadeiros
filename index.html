@@ -849,36 +849,77 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL DE SUCESSO DO PEDIDO (WHATSAPP)      -->
+  <!-- MODAL DE ACOMPANHAMENTO DO PEDIDO PÓS-CHECKOUT -->
   <!-- ========================================== -->
   <div id="order-success-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border border-pink-100 space-y-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-2xl border border-pink-100 space-y-4 text-left">
       
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
-        <i data-lucide="check" class="w-8 h-8"></i>
+      <!-- Topo com Status de Sucesso -->
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner mb-2">
+          <i data-lucide="check" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-bold text-xl text-slate-800">Pedido Realizado com Sucesso!</h3>
+        <p class="text-xs text-slate-500">Acompanhe abaixo os detalhes e o andamento da sua encomenda</p>
       </div>
 
-      <h3 class="font-serif font-bold text-2xl text-slate-800">Pedido Realizado com Sucesso!</h3>
-      
-      <div class="bg-pink-50 p-4 rounded-2xl border border-pink-100 text-xs space-y-1">
-        <div>Código de Acompanhamento:</div>
-        <div id="success-order-id" class="text-xl font-bold text-pink-700 tracking-wider">JEL-XXXX</div>
-        <div class="text-slate-500 pt-1">Total: <span id="success-order-total" class="font-bold text-slate-800">R$ 0,00</span></div>
+      <!-- Card do Código e Total -->
+      <div class="bg-pink-50/80 p-4 rounded-2xl border border-pink-200/70 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Código de Acompanhamento:</span>
+          <div id="success-order-id" class="text-xl sm:text-2xl font-bold text-pink-700 tracking-wider">JEL-XXXX</div>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Valor Total:</span>
+          <div id="success-order-total" class="text-xl sm:text-2xl font-bold text-slate-800">R$ 0,00</div>
+        </div>
       </div>
 
-      <p class="text-xs text-slate-600 leading-relaxed">
-        Clique no botão abaixo para enviar os detalhes da sua encomenda direto para o <strong>WhatsApp da J&L Brigadeiros</strong> para confirmação rápida!
-      </p>
+      <!-- Barra de Progresso / Linha do Tempo de Status -->
+      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold text-slate-700">Status em Tempo Real:</span>
+          <span id="success-status-badge" class="text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-md">1. Recebido</span>
+        </div>
+        <div class="grid grid-cols-4 gap-1 text-center text-[10px] sm:text-xs">
+          <div class="p-1.5 rounded-lg bg-pink-600 text-white font-bold shadow-sm">1. Recebido</div>
+          <div class="p-1.5 rounded-lg bg-slate-200 text-slate-600 font-medium">2. Confirmado</div>
+          <div class="p-1.5 rounded-lg bg-slate-200 text-slate-600 font-medium">3. Produção</div>
+          <div class="p-1.5 rounded-lg bg-slate-200 text-slate-600 font-medium">4. Pronto</div>
+        </div>
+      </div>
 
-      <div class="space-y-2 pt-2">
+      <!-- Área de Pagamento Pix (visível se o pagamento for Pix) -->
+      <div id="success-pix-container" class="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-2xl border border-emerald-300 space-y-2.5 text-xs">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5 font-bold text-emerald-900">
+            <span>💠 Pagamento via Pix:</span>
+            <span id="success-pix-amount" class="text-pink-700 text-sm font-bold">R$ 0,00</span>
+          </div>
+          <span class="bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded text-[10px] font-bold">Pendente</span>
+        </div>
+        <p class="text-[11px] text-emerald-800">Copie a chave Pix abaixo e envie o comprovante pelo WhatsApp:</p>
+        <div class="flex gap-2">
+          <input id="success-pix-key-input" type="text" readonly class="flex-1 p-2.5 bg-white border border-emerald-300 rounded-xl text-xs font-mono select-all text-slate-800">
+          <button onclick="App.copySuccessPixKey()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-2.5 rounded-xl text-xs flex items-center gap-1 transition shadow-sm">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Detalhes do Evento & Entrega -->
+      <div id="success-order-summary-details" class="text-xs text-slate-600 space-y-1.5 bg-white p-3.5 rounded-2xl border border-slate-100">
+        <!-- Injetado dinamicamente via JS -->
+      </div>
+
+      <!-- Botões de Ação -->
+      <div class="space-y-2 pt-1">
         <a id="success-whatsapp-btn" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
-          <i data-lucide="message-circle" class="w-5 h-5"></i> Enviar Detalhes no WhatsApp
+          <i data-lucide="message-circle" class="w-5 h-5"></i> Enviar Pedido no WhatsApp da Doceria
         </a>
-        <a href="https://www.instagram.com/_brigadeiroos/" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-pink-50 to-rose-50 hover:bg-pink-100 text-pink-700 font-bold py-2.5 px-4 rounded-xl border border-pink-200 transition flex items-center justify-center gap-2 text-xs">
-          <i data-lucide="instagram" class="w-4 h-4 text-pink-600"></i> Seguir @_brigadeiroos no Instagram
-        </a>
-        <button onclick="App.closeOrderSuccessModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl">
-          Concluir e Voltar
+        <button onclick="App.closeOrderSuccessModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 rounded-xl transition">
+          Concluir e Voltar ao Cardápio
         </button>
       </div>
 

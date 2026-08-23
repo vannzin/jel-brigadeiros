@@ -7,9 +7,9 @@ const INITIAL_DATA = {
     storeName: "J&L Brigadeiros",
     slogan: "Doces artesanais feitos com carinho para momentos inesquecíveis",
     whatsappNumber: "5531992535455", // Número oficial para receber pedidos (31) 99253-5455
-    pixKey: "jl.brigadeiros@exemplo.com",
-    pixKeyType: "E-mail",
-    pixReceiver: "J&L Brigadeiros Artesanais",
+    pixKey: "31992535455",
+    pixKeyType: "Celular / WhatsApp",
+    pixReceiver: "J&L Brigadeiros",
     defaultDeliveryFee: 10.00,
     minAdvanceDays: 2, // Mínimo de 2 dias de antecedência para encomendas
     instagramUrl: "https://www.instagram.com/_brigadeiroos/",
