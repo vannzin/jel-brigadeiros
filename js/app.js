@@ -835,8 +835,25 @@ const App = {
         <div><strong>Data do Evento:</strong> ${this.formatDate(order.eventDate)} às ${order.eventTime}</div>
         <div><strong>Total:</strong> <span class="font-bold text-pink-700">${this.formatMoney(order.total)}</span> (${order.paymentStatus === 'pago' ? 'Pago' : 'Pagamento Pendente'})</div>
       </div>
+
+      ${order.uberTrackingUrl ? `
+        <div class="mt-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 p-3.5 rounded-2xl flex flex-col gap-2 shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🚗</span>
+            <div>
+              <div class="text-xs font-bold text-emerald-900">Motorista a Caminho via Uber Flash!</div>
+              <p class="text-[11px] text-emerald-700">Acompanhe a localização do motorista em tempo real.</p>
+            </div>
+          </div>
+          <a href="${order.uberTrackingUrl}" target="_blank" rel="noopener noreferrer" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5 text-center">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+            <span>Acompanhar no Mapa da Uber em Tempo Real</span>
+          </a>
+        </div>
+      ` : ''}
     `;
 
+    lucide.createIcons();
     resultContainer.classList.remove("hidden");
   },
 

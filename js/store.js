@@ -172,6 +172,17 @@ class Store {
     return false;
   }
 
+  updateOrderUberTracking(orderId, uberTrackingUrl) {
+    const order = this.getOrderById(orderId);
+    if (order) {
+      order.uberTrackingUrl = uberTrackingUrl ? uberTrackingUrl.trim() : null;
+      this.save();
+      this.notify();
+      return true;
+    }
+    return false;
+  }
+
   deleteOrder(orderId) {
     this.data.orders = (this.data.orders || []).filter(o => o.id !== orderId);
     this.save();

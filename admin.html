@@ -790,6 +790,32 @@
               <div class="flex justify-between font-bold text-base text-pink-700 pt-1 border-t border-pink-200"><span>Total:</span><span>${this.formatMoney(order.total)}</span></div>
             </div>
 
+            <!-- Rastreio de Corrida Uber Flash -->
+            <div class="p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-emerald-900 flex items-center gap-1.5">
+                  🚗 Rastreio Uber Flash (Corrida em Tempo Real)
+                </span>
+                ${order.uberTrackingUrl ? `<span class="bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded text-[10px] font-bold">Link Ativo</span>` : ''}
+              </div>
+              <div class="flex gap-2">
+                <input id="admin-uber-link-${order.id}" type="text" placeholder="Cole o link da viagem Uber (https://trip.uber.com/...)" value="${order.uberTrackingUrl || ''}" class="flex-1 p-2 border border-emerald-300 rounded-lg text-xs bg-white focus:outline-none">
+                <button onclick="AdminApp.saveUberLink('${order.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-2 rounded-lg text-xs flex items-center gap-1 transition">
+                  Salvar
+                </button>
+              </div>
+              ${order.uberTrackingUrl ? `
+                <div class="flex items-center gap-2 pt-1">
+                  <a href="${order.uberTrackingUrl}" target="_blank" class="text-emerald-700 underline font-bold text-[11px] flex items-center gap-1">
+                    <i data-lucide="external-link" class="w-3 h-3"></i> Testar Mapa Uber
+                  </a>
+                  <button onclick="AdminApp.notifyUberWhatsApp('${order.id}')" class="ml-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-[11px] flex items-center gap-1 transition shadow-sm">
+                    <i data-lucide="send" class="w-3 h-3"></i> Enviar Link Uber no WhatsApp
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+
             <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
               <button onclick="AdminApp.notifyWhatsApp('${order.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition">
                 <i data-lucide="message-circle" class="w-4 h-4"></i> Notificar Cliente (WhatsApp)
@@ -809,6 +835,28 @@
         const modal = document.getElementById("order-details-modal");
         modal.classList.add("hidden");
         modal.classList.remove("flex");
+      },
+
+      saveUberLink(orderId) {
+        const input = document.getElementById(`admin-uber-link-${orderId}`);
+        const link = input ? input.value.trim() : "";
+        window.store.updateOrderUberTracking(orderId, link);
+        this.showOrderDetailsModal(orderId);
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: link ? 'Link do Uber Flash salvo!' : 'Link do Uber removido', showConfirmButton: false, timer: 1500 });
+      },
+
+      notifyUberWhatsApp(orderId) {
+        const order = window.store.getOrderById(orderId);
+        if (!order || !order.customerPhone || !order.uberTrackingUrl) return;
+
+        let msg = `Olá, *${order.customerName}*! Tudo bem?\n\n`;
+        msg += `🚗 Seus doces da *J&L Brigadeiros* acabaram de sair para entrega através do *Uber Flash*!\n\n`;
+        msg += `🗺️ *Acompanhe a localização do motorista em tempo real pelo mapa da Uber:*\n`;
+        msg += `${order.uberTrackingUrl}\n\n`;
+        msg += `Previsão de entrega para hoje. Fique atento(a) para receber sua encomenda! 💕`;
+
+        const phone = order.customerPhone.replace(/\D/g, "");
+        window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`, "_blank");
       },
 
       notifyWhatsApp(orderId) {
