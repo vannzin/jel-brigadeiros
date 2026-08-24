@@ -91,33 +91,33 @@ body {
   box-shadow: 0 20px 25px -5px rgba(219, 39, 119, 0.12), 0 8px 10px -6px rgba(219, 39, 119, 0.08);
 }
 
-/* Botão Encomendar Doce Rosa Fosco Bem Clarinho e Suave */
+/* Botão Encomendar Doce Rosa Fosco com Leve Destaque */
 .btn-encomendar {
   position: relative;
   font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
   font-size: 13.5px;
   letter-spacing: 0.06em;
   background-color: #fce7f3;
-  color: #9d174d !important;
+  color: #831843 !important;
   font-weight: 700;
-  border: 1px solid #fbcfe8;
-  box-shadow: 0 1px 3px 0 rgba(244, 114, 182, 0.15);
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1.5px solid #f472b6;
+  box-shadow: 0 2px 8px -1px rgba(219, 39, 119, 0.18), 0 1px 3px 0 rgba(219, 39, 119, 0.10);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-font-smoothing: antialiased;
 }
 
 .btn-encomendar:hover {
   background-color: #fbcfe8;
-  color: #831843 !important;
-  border-color: #f472b6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px -2px rgba(244, 114, 182, 0.25);
+  color: #701a75 !important;
+  border-color: #ec4899;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px -2px rgba(219, 39, 119, 0.28), 0 3px 8px -1px rgba(219, 39, 119, 0.15);
 }
 
 .btn-encomendar:active {
   background-color: #f9a8d4;
   transform: translateY(0);
-  box-shadow: 0 1px 2px 0 rgba(244, 114, 182, 0.20);
+  box-shadow: 0 2px 4px 0 rgba(219, 39, 119, 0.15);
 }
 
 /* Custom Scrollbar */
