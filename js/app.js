@@ -175,10 +175,10 @@ const App = {
             </div>
           </div>
 
-          <button onclick="App.openCustomizeModal('${prod.id}')" class="btn-encomendar w-full py-2.5 px-3.5 rounded-xl text-white font-bold text-xs tracking-wider flex items-center justify-center gap-1.5 group cursor-pointer shadow-sm">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-white group-hover:rotate-12 group-hover:scale-110 transition-transform"></i>
-            <span class="text-white font-bold">ENCOMENDAR</span>
-            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-white opacity-90 group-hover:translate-x-1 group-hover:opacity-100 transition-all"></i>
+          <button onclick="App.openCustomizeModal('${prod.id}')" class="btn-encomendar w-full py-2.5 px-3.5 rounded-xl font-bold text-xs tracking-wider flex items-center justify-center gap-1.5 group cursor-pointer shadow-sm">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 group-hover:rotate-12 transition-transform"></i>
+            <span>ENCOMENDAR</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 opacity-80 group-hover:translate-x-1 group-hover:opacity-100 transition-all"></i>
           </button>
         </div>
       </div>
