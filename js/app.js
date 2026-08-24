@@ -175,8 +175,7 @@ const App = {
             </div>
           </div>
 
-          <button onclick="App.openCustomizeModal('${prod.id}')" class="btn-encomendar w-full py-2.5 px-3.5 rounded-xl font-bold text-xs tracking-wider flex items-center justify-center gap-1.5 group cursor-pointer shadow-sm">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 group-hover:rotate-12 transition-transform"></i>
+          <button onclick="App.openCustomizeModal('${prod.id}')" class="btn-encomendar w-full py-2.5 px-3.5 rounded-xl font-bold text-xs tracking-wider flex items-center justify-center gap-2 group cursor-pointer shadow-sm">
             <span>ENCOMENDAR</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5 opacity-80 group-hover:translate-x-1 group-hover:opacity-100 transition-all"></i>
           </button>
