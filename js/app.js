@@ -1524,11 +1524,11 @@ const App = {
     const products = window.store.getAllProductsAdmin();
 
     container.innerHTML = products.map(prod => `
-      <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+      <div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-pink-300 transition">
         <div>
           <div class="flex items-start justify-between gap-3 mb-2">
             <div class="flex items-center gap-2">
-              <span class="text-2xl">${prod.icon}</span>
+              <span class="text-2xl">${prod.icon || '🍫'}</span>
               <div>
                 <h4 class="font-bold text-slate-800 text-base leading-tight">${prod.name}</h4>
                 <span class="text-xs font-semibold text-pink-600 bg-pink-50 px-2 py-0.5 rounded">${prod.category}</span>
@@ -1539,30 +1539,166 @@ const App = {
             </span>
           </div>
 
-          <p class="text-xs text-slate-600 mb-3 line-clamp-2">${prod.description}</p>
+          <p class="text-xs text-slate-600 mb-3 line-clamp-2">${prod.description || 'Sem descrição.'}</p>
 
           <!-- Preços Atuais -->
           <div class="grid grid-cols-2 gap-2 bg-pink-50/60 p-2.5 rounded-xl border border-pink-100 text-xs mb-3">
             <div>
-              <span class="text-slate-500">50 unidades:</span>
-              <div class="font-bold text-pink-700 text-sm">${this.formatMoney(prod.pricing[50])}</div>
+              <span class="text-slate-500 text-[10px]">50 unidades:</span>
+              <div class="font-bold text-pink-700 text-sm">${this.formatMoney(prod.pricing ? prod.pricing[50] : 0)}</div>
             </div>
             <div>
-              <span class="text-slate-500">100 unidades:</span>
-              <div class="font-bold text-emerald-700 text-sm">${this.formatMoney(prod.pricing[100])}</div>
+              <span class="text-slate-500 text-[10px]">100 unidades:</span>
+              <div class="font-bold text-emerald-700 text-sm">${this.formatMoney(prod.pricing ? prod.pricing[100] : 0)}</div>
             </div>
           </div>
         </div>
 
         <div class="flex gap-2 pt-2 border-t border-slate-100">
           <button onclick="App.openEditProductModal('${prod.id}')" class="flex-1 bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-semibold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
-            <i data-lucide="edit" class="w-3.5 h-3.5"></i> Editar Preços
+            <i data-lucide="edit" class="w-3.5 h-3.5"></i> Editar
+          </button>
+          <button onclick="App.deleteProduct('${prod.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold p-2 rounded-xl transition flex items-center justify-center" title="Excluir Doce">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           </button>
         </div>
       </div>
     `).join("");
 
     lucide.createIcons();
+  },
+
+  openNewProductModal() {
+    Swal.fire({
+      title: '➕ Novo Doce no Cardápio',
+      html: `
+        <div class="text-left space-y-3 text-xs max-h-[68vh] overflow-y-auto pr-1">
+          <div>
+            <label class="font-bold block text-slate-700 mb-1">Nome do Doce *:</label>
+            <input id="swal-app-new-name" type="text" placeholder="Ex: Brigadeiro de Pistache Nobre" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-pink-500 focus:outline-none">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="font-bold block text-slate-700 mb-1">Categoria:</label>
+              <select id="swal-app-new-category" class="w-full p-2.5 border rounded-xl bg-white focus:ring-2 focus:ring-pink-500 focus:outline-none">
+                <option value="tradicional">Tradicional</option>
+                <option value="especial">Especial</option>
+                <option value="tematico">Temático</option>
+                <option value="carimbo">Personalizado no Carimbo</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold block text-slate-700 mb-1">Selo / Destaque:</label>
+              <input id="swal-app-new-badge" type="text" placeholder="Ex: Novidade, Mais Pedido" class="w-full p-2.5 border rounded-xl">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 bg-pink-50/70 p-2.5 rounded-xl border border-pink-200">
+            <div>
+              <label class="font-bold block text-pink-900 mb-1">Preço 50 un (R$) *:</label>
+              <input id="swal-app-new-p50" type="number" step="0.50" placeholder="80.00" class="w-full p-2 border rounded-lg bg-white font-bold text-pink-700">
+            </div>
+            <div>
+              <label class="font-bold block text-emerald-900 mb-1">Preço 100 un (R$) *:</label>
+              <input id="swal-app-new-p100" type="number" step="0.50" placeholder="150.00" class="w-full p-2 border rounded-lg bg-white font-bold text-emerald-700">
+            </div>
+          </div>
+
+          <div>
+            <label class="font-bold block text-slate-700 mb-1">Descrição do Doce:</label>
+            <textarea id="swal-app-new-desc" rows="2" placeholder="Ex: Deliciosos brigadeiros artesanais feitos com ingredientes nobres..." class="w-full p-2.5 border rounded-xl"></textarea>
+          </div>
+
+          <div>
+            <label class="font-bold block text-slate-700 mb-1">Caminho da Imagem ou URL da Foto:</label>
+            <input id="swal-app-new-image" type="text" placeholder="Ex: img/doces_carimbo.jpg ou link da imagem" value="img/doces_carimbo.jpg" class="w-full p-2.5 border rounded-xl font-mono text-[11px]">
+          </div>
+
+          <div>
+            <label class="font-bold block text-slate-700 mb-1">Sabores Inclusos (separados por vírgula):</label>
+            <input id="swal-app-new-flavors" type="text" placeholder="Ex: Pistache com Chocolate, Ninho, Tradicional" class="w-full p-2.5 border rounded-xl">
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Cadastrar Doce',
+      confirmButtonColor: '#db2777',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const name = document.getElementById('swal-app-new-name').value.trim();
+        const category = document.getElementById('swal-app-new-category').value;
+        const badge = document.getElementById('swal-app-new-badge').value.trim();
+        const p50 = parseFloat(document.getElementById('swal-app-new-p50').value);
+        const p100 = parseFloat(document.getElementById('swal-app-new-p100').value);
+        const desc = document.getElementById('swal-app-new-desc').value.trim();
+        const image = document.getElementById('swal-app-new-image').value.trim() || 'img/doces_carimbo.jpg';
+        const flavorsRaw = document.getElementById('swal-app-new-flavors').value.trim();
+
+        if (!name) {
+          Swal.showValidationMessage('Por favor, informe o nome do doce!');
+          return false;
+        }
+        if (isNaN(p50) || isNaN(p100) || p50 <= 0 || p100 <= 0) {
+          Swal.showValidationMessage('Informe preços válidos para 50 e 100 unidades!');
+          return false;
+        }
+
+        const availableFlavors = flavorsRaw ? flavorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+        return {
+          name,
+          category,
+          badge: badge || null,
+          pricing: { 50: p50, 100: p100 },
+          description: desc || "Doces artesanais de alta qualidade produzidos com carinho.",
+          image,
+          icon: "🍫",
+          hasFlavors: availableFlavors.length > 0,
+          maxFlavors: availableFlavors.length > 1 ? 2 : 1,
+          availableFlavors,
+          hasCustomTheme: false,
+          hasStamp: false,
+          availableStamps: [],
+          active: true
+        };
+      }
+    }).then((res) => {
+      if (res.isConfirmed && res.value) {
+        window.store.addProduct(res.value);
+        this.renderAdminProducts();
+        this.renderProducts();
+        Swal.fire({
+          icon: 'success',
+          title: 'Doce Cadastrado!',
+          text: `O item "${res.value.name}" já está disponível no cardápio!`,
+          confirmButtonColor: '#db2777'
+        });
+      }
+    });
+  },
+
+  deleteProduct(productId) {
+    const prod = window.store.getProductById(productId);
+    if (!prod) return;
+
+    Swal.fire({
+      title: `Excluir "${prod.name}"?`,
+      text: "Este item será removido do cardápio e da lista de encomendas.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e11d48',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Sim, excluir doce',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.store.deleteProduct(productId);
+        this.renderAdminProducts();
+        this.renderProducts();
+        Swal.fire('Excluído!', 'O doce foi removido do catálogo.', 'success');
+      }
+    });
   },
 
   openEditProductModal(productId) {
@@ -1575,11 +1711,11 @@ const App = {
         <div class="text-left space-y-3 text-sm">
           <div>
             <label class="font-bold block text-slate-700 mb-1">Preço para 50 unidades (R$):</label>
-            <input id="swal-price-50" type="number" step="0.50" value="${prod.pricing[50]}" class="w-full p-2 border rounded-lg">
+            <input id="swal-price-50" type="number" step="0.50" value="${prod.pricing ? prod.pricing[50] : 0}" class="w-full p-2 border rounded-lg">
           </div>
           <div>
             <label class="font-bold block text-slate-700 mb-1">Preço para 100 unidades (R$):</label>
-            <input id="swal-price-100" type="number" step="0.50" value="${prod.pricing[100]}" class="w-full p-2 border rounded-lg">
+            <input id="swal-price-100" type="number" step="0.50" value="${prod.pricing ? prod.pricing[100] : 0}" class="w-full p-2 border rounded-lg">
           </div>
           <div class="flex items-center gap-2 pt-2">
             <input id="swal-prod-active" type="checkbox" ${prod.active !== false ? 'checked' : ''} class="w-4 h-4 text-pink-600 rounded">
@@ -1605,6 +1741,7 @@ const App = {
       }
     }).then((res) => {
       if (res.isConfirmed) {
+        if (!prod.pricing) prod.pricing = {};
         prod.pricing[50] = res.value.p50;
         prod.pricing[100] = res.value.p100;
         prod.active = res.value.active;

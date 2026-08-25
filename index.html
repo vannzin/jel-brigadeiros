@@ -29,7 +29,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <!-- Estilos Personalizados -->
-  <link rel="stylesheet" href="css/custom.css?v=2.5">
+  <link rel="stylesheet" href="css/custom.css?v=2.6">
   
   <script>
     tailwind.config = {
@@ -390,11 +390,14 @@
 
       <!-- ABA 4: GESTÃO DE PRODUTOS & PREÇOS -->
       <div id="admin-tab-products" class="admin-tab-content hidden space-y-4">
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex justify-between items-center">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h3 class="font-bold text-lg text-slate-800">Catálogo e Tabela de Preços</h3>
-            <p class="text-xs text-slate-500">Configure os valores para 50 unidades, 100 unidades e disponibilidade de cada doce</p>
+            <p class="text-xs text-slate-500">Adicione novos itens ao cardápio ou configure os valores de cada doce</p>
           </div>
+          <button onclick="App.openNewProductModal()" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 flex-shrink-0">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Novo Doce
+          </button>
         </div>
 
         <div id="admin-products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1005,8 +1008,8 @@
   </nav>
 
   <!-- Scripts do Projeto -->
-  <script src="js/data.js?v=2.5"></script>
-  <script src="js/store.js?v=2.5"></script>
-  <script src="js/app.js?v=2.5"></script>
+  <script src="js/data.js?v=2.6"></script>
+  <script src="js/store.js?v=2.6"></script>
+  <script src="js/app.js?v=2.6"></script>
 </body>
 </html>
