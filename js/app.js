@@ -645,7 +645,7 @@ const App = {
     document.getElementById("checkout-summary-total").textContent = this.formatMoney(total);
   },
 
-  submitOrder() {
+  async submitOrder() {
     const name = document.getElementById("checkout-name").value.trim();
     const phone = document.getElementById("checkout-phone").value.trim();
     const eventDate = document.getElementById("checkout-event-date").value;
@@ -706,10 +706,20 @@ const App = {
       total
     };
 
+    // Feedback de carregamento
+    Swal.fire({
+      title: 'Registrando Encomenda...',
+      text: 'Gerando detalhes do pedido...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     const newOrder = window.store.createOrder(orderPayload);
     this.closeCheckoutModal();
 
-    // Se o cliente escolheu Cartão, solicitar preferência ao Mercado Pago
+    // Se o cliente escolheu Cartão, solicitar link de pagamento ao Mercado Pago
     if (newOrder.paymentMethod === "cartao" || newOrder.paymentMethod === "mercadopago") {
       try {
         const response = await fetch("/api/create-preference", {
@@ -721,11 +731,15 @@ const App = {
         if (data.success && (data.init_point || data.sandbox_init_point)) {
           newOrder.paymentUrl = data.init_point || data.sandbox_init_point;
           window.store.updateOrder(newOrder.id, { paymentUrl: newOrder.paymentUrl });
+        } else if (data.error) {
+          console.warn("Mercado Pago avisou:", data.error);
         }
       } catch (err) {
         console.warn("Aviso ao conectar com Mercado Pago:", err);
       }
     }
+
+    Swal.close();
 
     // Exibe modal de Sucesso com Acompanhamento e link WhatsApp
     this.showOrderSuccessModal(newOrder);

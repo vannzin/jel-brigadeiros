@@ -58,9 +58,11 @@ const server = http.createServer(async (req, res) => {
     const token = process.env.MP_ACCESS_TOKEN || 
                   process.env.MERCADO_PAGO_TOKEN || 
                   process.env.MERCADOPAGO_ACCESS_TOKEN || 
-                  process.env.ACCESS_TOKEN;
+                  process.env.ACCESS_TOKEN ||
+                  process.env.MP_TOKEN;
 
     if (!token || token.trim().length < 10) {
+      console.warn("⚠️ Token do Mercado Pago não encontrado nas variáveis do ambiente!");
       res.writeHead(400, { "Content-Type": "application/json; charset=UTF-8" });
       res.end(JSON.stringify({ 
         success: false, 
@@ -75,34 +77,37 @@ const server = http.createServer(async (req, res) => {
       try {
         const order = JSON.parse(body || "{}");
         const host = req.headers.host || "jelbrigadeiros.com.br";
-        const protocol = req.headers["x-forwarded-proto"] || "https";
+        const isHttps = (req.headers["x-forwarded-proto"] === "https") || host.includes("railway.app") || host.includes("jelbrigadeiros.com.br");
+        const protocol = isHttps ? "https" : "http";
+
+        const totalAmount = Number(parseFloat(order.total || 0).toFixed(2));
 
         const mpPayload = {
           items: [
             {
-              id: order.id || "JEL-" + Date.now(),
+              id: String(order.id || "JEL-1"),
               title: `Encomenda J&L Brigadeiros #${order.id || ""}`,
-              description: `Pedido de doces artesanais #${order.id || ""}`,
+              description: `Doces artesanais J&L Brigadeiros`,
               quantity: 1,
               currency_id: "BRL",
-              unit_price: parseFloat(Number(order.total || 0).toFixed(2))
+              unit_price: totalAmount > 0 ? totalAmount : 1.00
             }
           ],
           payer: {
-            name: order.customerName || "Cliente",
-            phone: {
-              number: (order.customerPhone || "").replace(/\D/g, "")
-            }
+            name: (order.customerName || "Cliente J&L").slice(0, 30)
           },
-          external_reference: order.id,
-          back_urls: {
-            success: `${protocol}://${host}/?payment_status=success&orderId=${order.id}`,
-            failure: `${protocol}://${host}/?payment_status=failure&orderId=${order.id}`,
-            pending: `${protocol}://${host}/?payment_status=pending&orderId=${order.id}`
-          },
-          auto_return: "approved",
-          statement_descriptor: "JL BRIGADEIROS"
+          external_reference: String(order.id || "")
         };
+
+        // Adicionar back_urls e auto_return apenas se for HTTPS em produção
+        if (isHttps) {
+          mpPayload.back_urls = {
+            success: `https://${host}/?payment_status=success&orderId=${order.id}`,
+            failure: `https://${host}/?payment_status=failure&orderId=${order.id}`,
+            pending: `https://${host}/?payment_status=pending&orderId=${order.id}`
+          };
+          mpPayload.auto_return = "approved";
+        }
 
         const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
           method: "POST",
@@ -116,11 +121,16 @@ const server = http.createServer(async (req, res) => {
         const mpData = await mpRes.json();
 
         if (!mpRes.ok) {
-          console.error("Erro Mercado Pago API:", mpData);
+          console.error("❌ Erro Mercado Pago API:", mpData);
           res.writeHead(mpRes.status || 400, { "Content-Type": "application/json; charset=UTF-8" });
-          res.end(JSON.stringify({ success: false, error: mpData.message || "Erro ao gerar cobrança no Mercado Pago" }));
+          res.end(JSON.stringify({ 
+            success: false, 
+            error: mpData.message || (mpData.cause && mpData.cause[0] ? mpData.cause[0].description : "Erro ao gerar cobrança no Mercado Pago") 
+          }));
           return;
         }
+
+        console.log(`✅ Preferência Mercado Pago criada com sucesso para pedido ${order.id}:`, mpData.id);
 
         res.writeHead(200, { "Content-Type": "application/json; charset=UTF-8" });
         res.end(JSON.stringify({
@@ -130,7 +140,7 @@ const server = http.createServer(async (req, res) => {
           sandbox_init_point: mpData.sandbox_init_point
         }));
       } catch (err) {
-        console.error("Erro interno ao processar preferência:", err);
+        console.error("❌ Erro interno ao processar preferência:", err);
         res.writeHead(500, { "Content-Type": "application/json; charset=UTF-8" });
         res.end(JSON.stringify({ success: false, error: "Erro interno no servidor: " + err.message }));
       }
