@@ -28,7 +28,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <!-- Estilos Personalizados -->
-  <link rel="stylesheet" href="css/custom.css?v=2.6">
+  <link rel="stylesheet" href="css/custom.css?v=2.7">
   
   <script>
     tailwind.config = {
@@ -463,8 +463,8 @@
   <div id="print-area" class="hidden"></div>
 
   <!-- Scripts -->
-  <script src="js/data.js?v=2.6"></script>
-  <script src="js/store.js?v=2.6"></script>
+  <script src="js/data.js?v=2.7"></script>
+  <script src="js/store.js?v=2.7"></script>
   <script>
     const AdminApp = {
       activeTab: "dashboard",
@@ -986,17 +986,46 @@
         lucide.createIcons();
       },
 
+      handleImageUploadPreview(input, previewId, urlInputId) {
+        if (input.files && input.files[0]) {
+          const file = input.files[0];
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const previewEl = document.getElementById(previewId);
+            const urlEl = document.getElementById(urlInputId);
+            if (previewEl) previewEl.src = e.target.result;
+            if (urlEl) urlEl.value = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      },
+
       openNewProductModal() {
         Swal.fire({
           title: '➕ Novo Doce no Cardápio',
           html: `
-            <div class="text-left space-y-3 text-xs max-h-[68vh] overflow-y-auto pr-1">
+            <div class="text-left space-y-3 text-xs max-h-[72vh] overflow-y-auto pr-1">
+              <!-- Upload / Foto do Doce -->
               <div>
-                <label class="font-bold block text-slate-700 mb-1">Nome do Doce *:</label>
-                <input id="swal-new-name" type="text" placeholder="Ex: Brigadeiro de Pistache Nobre" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-pink-500 focus:outline-none">
+                <label class="font-bold block text-slate-700 mb-1">📸 Foto do Doce:</label>
+                <div class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-2xl">
+                  <img id="swal-new-img-preview" src="img/doces_carimbo.jpg" class="w-16 h-16 rounded-xl object-cover border border-slate-200 shadow-sm bg-white flex-shrink-0" onerror="this.src='img/doces_carimbo.jpg'">
+                  <div class="flex-1 space-y-1.5 min-w-0">
+                    <label class="cursor-pointer bg-white hover:bg-pink-50 text-pink-700 border border-pink-300 font-bold px-3 py-1.5 rounded-xl text-xs inline-flex items-center gap-1.5 shadow-sm transition">
+                      <span>📁 Escolher Foto do Aparelho</span>
+                      <input type="file" id="swal-new-img-file" accept="image/*" class="hidden" onchange="AdminApp.handleImageUploadPreview(this, 'swal-new-img-preview', 'swal-new-image')">
+                    </label>
+                    <input id="swal-new-image" type="text" placeholder="Ou cole a URL da imagem aqui..." value="img/doces_carimbo.jpg" oninput="document.getElementById('swal-new-img-preview').src=this.value" class="w-full p-2 border rounded-xl text-[11px] font-mono bg-white">
+                  </div>
+                </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-2">
+              <!-- Nome e Categoria -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label class="font-bold block text-slate-700 mb-1">Nome do Doce *:</label>
+                  <input id="swal-new-name" type="text" placeholder="Ex: Brigadeiro de Pistache Nobre" class="w-full p-2.5 border rounded-xl focus:ring-2 focus:ring-pink-500 focus:outline-none font-bold text-slate-800">
+                </div>
                 <div>
                   <label class="font-bold block text-slate-700 mb-1">Categoria:</label>
                   <select id="swal-new-category" class="w-full p-2.5 border rounded-xl bg-white focus:ring-2 focus:ring-pink-500 focus:outline-none">
@@ -1006,36 +1035,46 @@
                     <option value="carimbo">Personalizado no Carimbo</option>
                   </select>
                 </div>
-                <div>
-                  <label class="font-bold block text-slate-700 mb-1">Selo / Destaque:</label>
-                  <input id="swal-new-badge" type="text" placeholder="Ex: Novidade, Mais Pedido" class="w-full p-2.5 border rounded-xl">
+              </div>
+
+              <!-- Preços e Quantidade de Sabores Permitida -->
+              <div class="bg-pink-50/70 p-3 rounded-2xl border border-pink-200 space-y-2">
+                <div class="font-bold text-pink-950 text-xs flex items-center gap-1">
+                  <span>💰 Preços e Limite de Sabores por Quantidade:</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white p-2.5 rounded-xl border border-pink-100 space-y-1.5 shadow-sm">
+                    <label class="font-bold block text-pink-700 text-[11px]">50 Unidades - Preço (R$) *:</label>
+                    <input id="swal-new-p50" type="number" step="0.50" placeholder="80.00" class="w-full p-2 border rounded-lg bg-pink-50/40 font-bold text-pink-700 text-sm">
+                    <label class="font-bold block text-slate-600 text-[10px] pt-1">Máx. de Sabores (50 un):</label>
+                    <input id="swal-new-max-flavors-50" type="number" min="1" max="10" value="2" class="w-full p-1.5 border rounded-lg text-xs">
+                  </div>
+                  <div class="bg-white p-2.5 rounded-xl border border-pink-100 space-y-1.5 shadow-sm">
+                    <label class="font-bold block text-emerald-700 text-[11px]">100 Unidades - Preço (R$) *:</label>
+                    <input id="swal-new-p100" type="number" step="0.50" placeholder="150.00" class="w-full p-2 border rounded-lg bg-emerald-50/40 font-bold text-emerald-700 text-sm">
+                    <label class="font-bold block text-slate-600 text-[10px] pt-1">Máx. de Sabores (100 un):</label>
+                    <input id="swal-new-max-flavors-100" type="number" min="1" max="10" value="4" class="w-full p-1.5 border rounded-lg text-xs">
+                  </div>
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-2 bg-pink-50/70 p-2.5 rounded-xl border border-pink-200">
+              <!-- Sabores Disponíveis -->
+              <div>
+                <label class="font-bold block text-slate-700 mb-1">Sabores Disponíveis para Escolha (separados por vírgula):</label>
+                <textarea id="swal-new-flavors" rows="2" placeholder="Ex: Brigadeiro Tradicional, Ninho com Nutella, Pistache Crocante, Morango Sensação" class="w-full p-2.5 border rounded-xl text-xs"></textarea>
+                <span class="text-[10px] text-slate-500">O cliente poderá marcar os sabores desta lista até o limite configurado.</span>
+              </div>
+
+              <!-- Descrição e Selo -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label class="font-bold block text-pink-900 mb-1">Preço 50 un (R$) *:</label>
-                  <input id="swal-new-p50" type="number" step="0.50" placeholder="80.00" class="w-full p-2 border rounded-lg bg-white font-bold text-pink-700">
+                  <label class="font-bold block text-slate-700 mb-1">Selo de Destaque (opcional):</label>
+                  <input id="swal-new-badge" type="text" placeholder="Ex: Novidade, Mais Pedido, Artesanal" class="w-full p-2.5 border rounded-xl text-xs">
                 </div>
                 <div>
-                  <label class="font-bold block text-emerald-900 mb-1">Preço 100 un (R$) *:</label>
-                  <input id="swal-new-p100" type="number" step="0.50" placeholder="150.00" class="w-full p-2 border rounded-lg bg-white font-bold text-emerald-700">
+                  <label class="font-bold block text-slate-700 mb-1">Descrição Curta:</label>
+                  <input id="swal-new-desc" type="text" placeholder="Ex: Feito com chocolate nobre e confeitos especiais..." class="w-full p-2.5 border rounded-xl text-xs">
                 </div>
-              </div>
-
-              <div>
-                <label class="font-bold block text-slate-700 mb-1">Descrição do Doce:</label>
-                <textarea id="swal-new-desc" rows="2" placeholder="Ex: Deliciosos brigadeiros artesanais feitos com ingredientes nobres..." class="w-full p-2.5 border rounded-xl"></textarea>
-              </div>
-
-              <div>
-                <label class="font-bold block text-slate-700 mb-1">Caminho da Imagem ou URL da Foto:</label>
-                <input id="swal-new-image" type="text" placeholder="Ex: img/doces_carimbo.jpg ou link da imagem" value="img/doces_carimbo.jpg" class="w-full p-2.5 border rounded-xl font-mono text-[11px]">
-              </div>
-
-              <div>
-                <label class="font-bold block text-slate-700 mb-1">Sabores Inclusos (separados por vírgula):</label>
-                <input id="swal-new-flavors" type="text" placeholder="Ex: Pistache com Chocolate, Ninho, Tradicional" class="w-full p-2.5 border rounded-xl">
               </div>
             </div>
           `,
@@ -1049,6 +1088,8 @@
             const badge = document.getElementById('swal-new-badge').value.trim();
             const p50 = parseFloat(document.getElementById('swal-new-p50').value);
             const p100 = parseFloat(document.getElementById('swal-new-p100').value);
+            const max50 = parseInt(document.getElementById('swal-new-max-flavors-50').value) || 2;
+            const max100 = parseInt(document.getElementById('swal-new-max-flavors-100').value) || 4;
             const desc = document.getElementById('swal-new-desc').value.trim();
             const image = document.getElementById('swal-new-image').value.trim() || 'img/doces_carimbo.jpg';
             const flavorsRaw = document.getElementById('swal-new-flavors').value.trim();
@@ -1069,11 +1110,12 @@
               category,
               badge: badge || null,
               pricing: { 50: p50, 100: p100 },
+              maxFlavorsByQty: { 50: max50, 100: max100 },
+              maxFlavors: max50,
               description: desc || "Doces artesanais de alta qualidade produzidos com carinho.",
               image,
               icon: "🍫",
               hasFlavors: availableFlavors.length > 0,
-              maxFlavors: availableFlavors.length > 1 ? 2 : 1,
               availableFlavors,
               hasCustomTheme: false,
               hasStamp: false,
@@ -1088,7 +1130,7 @@
             Swal.fire({
               icon: 'success',
               title: 'Doce Cadastrado!',
-              text: `O item "${res.value.name}" já está disponível no cardápio!`,
+              text: `O item "${res.value.name}" foi adicionado com sucesso!`,
               confirmButtonColor: '#db2777'
             });
           }
@@ -1158,40 +1200,141 @@
         const prod = window.store.getProductById(productId);
         if (!prod) return;
 
+        const p50 = prod.pricing ? prod.pricing[50] || 0 : 0;
+        const p100 = prod.pricing ? prod.pricing[100] || 0 : 0;
+        const max50 = (prod.maxFlavorsByQty && prod.maxFlavorsByQty[50]) ? prod.maxFlavorsByQty[50] : (prod.maxFlavors || 2);
+        const max100 = (prod.maxFlavorsByQty && prod.maxFlavorsByQty[100]) ? prod.maxFlavorsByQty[100] : (prod.id === 'prod-1' ? 4 : (prod.maxFlavors || 2));
+        const flavorsStr = (prod.availableFlavors || []).join(", ");
+        const defaultImg = prod.image || "img/doces_carimbo.jpg";
+
         Swal.fire({
           title: `Editar ${prod.name}`,
           html: `
-            <div class="text-left space-y-3 text-sm">
+            <div class="text-left space-y-3 text-xs max-h-[72vh] overflow-y-auto pr-1">
+              <!-- Upload / Foto do Doce -->
               <div>
-                <label class="font-bold block text-slate-700 mb-1">Preço para 50 unidades (R$):</label>
-                <input id="swal-p50" type="number" step="0.50" value="${prod.pricing ? prod.pricing[50] : 0}" class="w-full p-2 border rounded-lg">
+                <label class="font-bold block text-slate-700 mb-1">📸 Foto do Doce:</label>
+                <div class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-2xl">
+                  <img id="swal-edit-img-preview" src="${defaultImg}" class="w-16 h-16 rounded-xl object-cover border border-slate-200 shadow-sm bg-white flex-shrink-0" onerror="this.src='img/doces_carimbo.jpg'">
+                  <div class="flex-1 space-y-1.5 min-w-0">
+                    <label class="cursor-pointer bg-white hover:bg-pink-50 text-pink-700 border border-pink-300 font-bold px-3 py-1.5 rounded-xl text-xs inline-flex items-center gap-1.5 shadow-sm transition">
+                      <span>📁 Trocar Foto do Aparelho</span>
+                      <input type="file" id="swal-edit-img-file" accept="image/*" class="hidden" onchange="AdminApp.handleImageUploadPreview(this, 'swal-edit-img-preview', 'swal-edit-image')">
+                    </label>
+                    <input id="swal-edit-image" type="text" placeholder="Ou cole a URL da imagem..." value="${defaultImg}" oninput="document.getElementById('swal-edit-img-preview').src=this.value" class="w-full p-2 border rounded-xl text-[11px] font-mono bg-white">
+                  </div>
+                </div>
               </div>
+
+              <!-- Nome e Categoria -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label class="font-bold block text-slate-700 mb-1">Nome do Doce *:</label>
+                  <input id="swal-edit-name" type="text" value="${prod.name || ''}" class="w-full p-2.5 border rounded-xl font-bold text-slate-800">
+                </div>
+                <div>
+                  <label class="font-bold block text-slate-700 mb-1">Categoria:</label>
+                  <select id="swal-edit-category" class="w-full p-2.5 border rounded-xl bg-white">
+                    <option value="tradicional" ${prod.category === 'tradicional' ? 'selected' : ''}>Tradicional</option>
+                    <option value="especial" ${prod.category === 'especial' ? 'selected' : ''}>Especial</option>
+                    <option value="tematico" ${prod.category === 'tematico' ? 'selected' : ''}>Temático</option>
+                    <option value="carimbo" ${prod.category === 'carimbo' ? 'selected' : ''}>Personalizado no Carimbo</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Preços e Quantidade de Sabores -->
+              <div class="bg-pink-50/70 p-3 rounded-2xl border border-pink-200 space-y-2">
+                <div class="font-bold text-pink-950 text-xs">💰 Preços e Limite de Sabores por Quantidade:</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white p-2.5 rounded-xl border border-pink-100 space-y-1.5 shadow-sm">
+                    <label class="font-bold block text-pink-700 text-[11px]">50 Unidades - Preço (R$) *:</label>
+                    <input id="swal-edit-p50" type="number" step="0.50" value="${p50}" class="w-full p-2 border rounded-lg bg-pink-50/40 font-bold text-pink-700 text-sm">
+                    <label class="font-bold block text-slate-600 text-[10px] pt-1">Máx. de Sabores (50 un):</label>
+                    <input id="swal-edit-max-flavors-50" type="number" min="1" max="10" value="${max50}" class="w-full p-1.5 border rounded-lg text-xs">
+                  </div>
+                  <div class="bg-white p-2.5 rounded-xl border border-pink-100 space-y-1.5 shadow-sm">
+                    <label class="font-bold block text-emerald-700 text-[11px]">100 Unidades - Preço (R$) *:</label>
+                    <input id="swal-edit-p100" type="number" step="0.50" value="${p100}" class="w-full p-2 border rounded-lg bg-emerald-50/40 font-bold text-emerald-700 text-sm">
+                    <label class="font-bold block text-slate-600 text-[10px] pt-1">Máx. de Sabores (100 un):</label>
+                    <input id="swal-edit-max-flavors-100" type="number" min="1" max="10" value="${max100}" class="w-full p-1.5 border rounded-lg text-xs">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sabores Disponíveis -->
               <div>
-                <label class="font-bold block text-slate-700 mb-1">Preço para 100 unidades (R$):</label>
-                <input id="swal-p100" type="number" step="0.50" value="${prod.pricing ? prod.pricing[100] : 0}" class="w-full p-2 border rounded-lg">
+                <label class="font-bold block text-slate-700 mb-1">Sabores Disponíveis (separados por vírgula):</label>
+                <textarea id="swal-edit-flavors" rows="2" class="w-full p-2.5 border rounded-xl text-xs">${flavorsStr}</textarea>
+                <span class="text-[10px] text-slate-500">O cliente poderá escolher dentre esses sabores ao adicionar à encomenda.</span>
+              </div>
+
+              <!-- Selo e Status -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label class="font-bold block text-slate-700 mb-1">Selo / Destaque (opcional):</label>
+                  <input id="swal-edit-badge" type="text" value="${prod.badge || ''}" placeholder="Ex: Novidade, Mais Pedido" class="w-full p-2.5 border rounded-xl text-xs">
+                </div>
+                <div class="flex items-center gap-2 pt-6">
+                  <input id="swal-edit-active" type="checkbox" ${prod.active !== false ? 'checked' : ''} class="w-4 h-4 text-pink-600 rounded">
+                  <label for="swal-edit-active" class="font-bold text-slate-700 text-xs">Disponível no cardápio</label>
+                </div>
+              </div>
+
+              <div>
+                <label class="font-bold block text-slate-700 mb-1">Descrição do Doce:</label>
+                <textarea id="swal-edit-desc" rows="2" class="w-full p-2.5 border rounded-xl text-xs">${prod.description || ''}</textarea>
               </div>
             </div>
           `,
           showCancelButton: true,
-          confirmButtonText: 'Salvar Preços',
+          confirmButtonText: 'Salvar Alterações',
+          cancelButtonText: 'Cancelar',
           confirmButtonColor: '#db2777',
           preConfirm: () => {
-            const p50 = parseFloat(document.getElementById('swal-p50').value);
-            const p100 = parseFloat(document.getElementById('swal-p100').value);
-            if (isNaN(p50) || isNaN(p100)) {
-              Swal.showValidationMessage('Preencha valores válidos!');
+            const name = document.getElementById('swal-edit-name').value.trim();
+            const category = document.getElementById('swal-edit-category').value;
+            const badge = document.getElementById('swal-edit-badge').value.trim();
+            const p50 = parseFloat(document.getElementById('swal-edit-p50').value);
+            const p100 = parseFloat(document.getElementById('swal-edit-p100').value);
+            const max50 = parseInt(document.getElementById('swal-edit-max-flavors-50').value) || 2;
+            const max100 = parseInt(document.getElementById('swal-edit-max-flavors-100').value) || 4;
+            const desc = document.getElementById('swal-edit-desc').value.trim();
+            const image = document.getElementById('swal-edit-image').value.trim() || prod.image || 'img/doces_carimbo.jpg';
+            const flavorsRaw = document.getElementById('swal-edit-flavors').value.trim();
+            const active = document.getElementById('swal-edit-active').checked;
+
+            if (!name) {
+              Swal.showValidationMessage('Por favor, informe o nome do doce!');
               return false;
             }
-            return { p50, p100 };
+            if (isNaN(p50) || isNaN(p100) || p50 <= 0 || p100 <= 0) {
+              Swal.showValidationMessage('Informe preços válidos para 50 e 100 unidades!');
+              return false;
+            }
+
+            const availableFlavors = flavorsRaw ? flavorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            return {
+              name,
+              category,
+              badge: badge || null,
+              pricing: { 50: p50, 100: p100 },
+              maxFlavorsByQty: { 50: max50, 100: max100 },
+              maxFlavors: max50,
+              description: desc,
+              image,
+              hasFlavors: availableFlavors.length > 0,
+              availableFlavors,
+              active
+            };
           }
         }).then((res) => {
-          if (res.isConfirmed) {
-            if (!prod.pricing) prod.pricing = {};
-            prod.pricing[50] = res.value.p50;
-            prod.pricing[100] = res.value.p100;
+          if (res.isConfirmed && res.value) {
+            Object.assign(prod, res.value);
             window.store.updateProduct(prod);
             this.renderProducts();
-            Swal.fire('Atualizado!', 'Preços salvos com sucesso.', 'success');
+            Swal.fire('Atualizado!', 'Doce atualizado com sucesso no cardápio.', 'success');
           }
         });
       },
