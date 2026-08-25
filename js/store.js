@@ -64,6 +64,8 @@ class Store {
           if (!prod4.image || prod4.image.includes("unsplash")) prod4.image = "img/doces_carimbo.jpg";
           prod4.description = INITIAL_DATA.products.find(p => p.id === "prod-4").description;
           prod4.availableFlavors = INITIAL_DATA.products.find(p => p.id === "prod-4").availableFlavors;
+          prod4.hasStamp = false;
+          prod4.availableStamps = [];
         }
         if (!this.data.sampleOrders && !this.data.orders) this.data.orders = INITIAL_DATA.sampleOrders;
         if (!this.data.orders) this.data.orders = this.data.sampleOrders || [];

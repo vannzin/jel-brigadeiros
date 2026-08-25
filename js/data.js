@@ -124,16 +124,8 @@ const INITIAL_DATA = {
         "Sensação"
       ],
       hasCustomTheme: false,
-      hasStamp: true,
-      availableStamps: [
-        "Com Amor ❤️",
-        "Parabéns 🎉",
-        "Gratidão ✨",
-        "Felicidades 🥂",
-        "Iniciais Personalizadas (especificar nas observações)",
-        "Idade / Números (especificar nas observações)",
-        "Coração Delicado 💖"
-      ],
+      hasStamp: false,
+      availableStamps: [],
       active: true
     }
   ],
