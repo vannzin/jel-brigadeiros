@@ -357,13 +357,20 @@ const App = {
       `;
     }
 
-    // 4. Observações específicas do item
+    // 4. Personalização / Observações do item
+    const labelTitle = (prod.id === "prod-4" || prod.category === "carimbo") 
+      ? "Qual personalização deseja?" 
+      : "Qual personalização deseja?";
+    const placeholderText = (prod.id === "prod-4" || prod.category === "carimbo")
+      ? "Ex: Frase, nomes, iniciais, idade ou carimbo desejado..."
+      : "Ex: Forminhas na cor dourada, detalhes especiais...";
+
     html += `
       <div class="mb-4">
         <label class="block font-semibold text-slate-800 text-sm mb-2">
-          Observações adicionais para este doce:
+          ${labelTitle}
         </label>
-        <input type="text" id="modal-item-notes" placeholder="Ex: Forminhas na cor dourada, sem confeito crocante..." class="w-full rounded-xl border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 text-sm p-3 border">
+        <input type="text" id="modal-item-notes" placeholder="${placeholderText}" class="w-full rounded-xl border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 text-sm p-3 border">
       </div>
     `;
 
