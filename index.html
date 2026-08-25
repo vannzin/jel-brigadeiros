@@ -29,7 +29,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <!-- Estilos Personalizados -->
-  <link rel="stylesheet" href="css/custom.css?v=2.2">
+  <link rel="stylesheet" href="css/custom.css?v=2.3">
   
   <script>
     tailwind.config = {
@@ -682,18 +682,16 @@
         <!-- Forma de Pagamento -->
         <div>
           <h4 class="font-bold text-slate-800 text-xs uppercase mb-3 text-pink-700">3. Forma de Pagamento</h4>
-          <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
-            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
+          <div class="grid grid-cols-2 gap-3 text-xs font-semibold">
+            <label class="flex flex-col items-center justify-center p-3.5 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
               <input type="radio" name="payment-method" value="pix" checked class="mb-1 text-pink-600">
-              <span>💠 Pix</span>
+              <span class="text-sm font-bold text-slate-800">💠 Pix</span>
+              <span class="text-[10px] text-slate-500 font-normal">Chave direta da loja</span>
             </label>
-            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
-              <input type="radio" name="payment-method" value="cartao" class="mb-1 text-pink-600">
-              <span>💳 Cartão</span>
-            </label>
-            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
+            <label class="flex flex-col items-center justify-center p-3.5 rounded-xl border border-slate-200 hover:border-pink-400 cursor-pointer text-center bg-slate-50">
               <input type="radio" name="payment-method" value="dinheiro" class="mb-1 text-pink-600">
-              <span>💵 Dinheiro</span>
+              <span class="text-sm font-bold text-slate-800">💵 Dinheiro</span>
+              <span class="text-[10px] text-slate-500 font-normal">Na entrega / retirada</span>
             </label>
           </div>
         </div>
@@ -778,22 +776,6 @@
             <span>Copiar</span>
           </button>
         </div>
-      </div>
-
-      <!-- Área de Pagamento Cartão / Mercado Pago (visível se o pagamento for Cartão / Online) -->
-      <div id="success-mercadopago-container" class="hidden bg-gradient-to-r from-sky-50 to-blue-50 p-4 rounded-2xl border border-sky-300 space-y-2.5 text-xs">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-1.5 font-bold text-sky-950">
-            <i data-lucide="credit-card" class="w-4 h-4 text-sky-600"></i>
-            <span>Pagamento Seguro Online:</span>
-          </div>
-          <span class="bg-sky-200 text-sky-900 px-2 py-0.5 rounded text-[10px] font-bold">Mercado Pago</span>
-        </div>
-        <p class="text-[11px] text-sky-800">Clique no botão abaixo para pagar com Cartão de Crédito (até 12x), Débito ou Pix com aprovação imediata:</p>
-        <a id="success-mp-pay-btn" href="#" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs">
-          <i data-lucide="lock" class="w-4 h-4"></i>
-          <span>Pagar Agora com Cartão / Pix (Mercado Pago)</span>
-        </a>
       </div>
 
       <!-- Detalhes do Evento & Entrega -->
@@ -1023,8 +1005,8 @@
   </nav>
 
   <!-- Scripts do Projeto -->
-  <script src="js/data.js?v=2.2"></script>
-  <script src="js/store.js?v=2.2"></script>
-  <script src="js/app.js?v=2.2"></script>
+  <script src="js/data.js?v=2.3"></script>
+  <script src="js/store.js?v=2.3"></script>
+  <script src="js/app.js?v=2.3"></script>
 </body>
 </html>

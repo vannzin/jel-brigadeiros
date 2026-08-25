@@ -706,40 +706,8 @@ const App = {
       total
     };
 
-    // Feedback de carregamento
-    Swal.fire({
-      title: 'Registrando Encomenda...',
-      text: 'Gerando detalhes do pedido...',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
-
     const newOrder = window.store.createOrder(orderPayload);
     this.closeCheckoutModal();
-
-    // Se o cliente escolheu Cartão, solicitar link de pagamento ao Mercado Pago
-    if (newOrder.paymentMethod === "cartao" || newOrder.paymentMethod === "mercadopago") {
-      try {
-        const response = await fetch("/api/create-preference", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newOrder)
-        });
-        const data = await response.json();
-        if (data.success && (data.init_point || data.sandbox_init_point)) {
-          newOrder.paymentUrl = data.init_point || data.sandbox_init_point;
-          window.store.updateOrder(newOrder.id, { paymentUrl: newOrder.paymentUrl });
-        } else if (data.error) {
-          console.warn("Mercado Pago avisou:", data.error);
-        }
-      } catch (err) {
-        console.warn("Aviso ao conectar com Mercado Pago:", err);
-      }
-    }
-
-    Swal.close();
 
     // Exibe modal de Sucesso com Acompanhamento e link WhatsApp
     this.showOrderSuccessModal(newOrder);
@@ -765,19 +733,6 @@ const App = {
       pixContainer.classList.add("hidden");
     }
 
-    // Configuração do Container Mercado Pago (Cartão / Online)
-    const mpContainer = document.getElementById("success-mercadopago-container");
-    const mpPayBtn = document.getElementById("success-mp-pay-btn");
-    
-    if ((order.paymentMethod === "cartao" || order.paymentUrl) && mpContainer) {
-      mpContainer.classList.remove("hidden");
-      if (mpPayBtn && order.paymentUrl) {
-        mpPayBtn.href = order.paymentUrl;
-      }
-    } else if (mpContainer) {
-      mpContainer.classList.add("hidden");
-    }
-
     // Detalhes do Pedido
     const detailsContainer = document.getElementById("success-order-summary-details");
     if (detailsContainer) {
@@ -786,7 +741,7 @@ const App = {
         <div><strong>📅 Data do Evento:</strong> ${this.formatDate(order.eventDate)} às ${order.eventTime}</div>
         <div><strong>🚚 Entrega/Retirada:</strong> ${order.deliveryType === 'delivery' ? 'Entrega a Domicílio (🚗 via Uber)' : 'Retirada na Confeitaria'}</div>
         ${order.deliveryAddress ? `<div class="text-[11px] text-slate-500 pl-4">📍 ${order.deliveryAddress}</div>` : ''}
-        <div><strong>💳 Pagamento:</strong> <span class="font-bold text-pink-700 uppercase">${order.paymentMethod === 'cartao' ? 'Cartão / Mercado Pago' : order.paymentMethod}</span></div>
+        <div><strong>💳 Pagamento:</strong> <span class="font-bold text-pink-700 uppercase">${order.paymentMethod === 'pix' ? '💠 Pix (Chave da Loja)' : '💵 Dinheiro'}</span></div>
       `;
     }
     
