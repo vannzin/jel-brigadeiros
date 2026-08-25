@@ -174,10 +174,15 @@ const server = http.createServer(async (req, res) => {
 
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || "application/octet-stream";
+    const isDynamic = [".html", ".js", ".css", ".json"].includes(ext);
 
     res.writeHead(200, {
       "Content-Type": contentType,
-      "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=86400"
+      "Cache-Control": isDynamic 
+        ? "no-cache, no-store, must-revalidate, max-age=0" 
+        : "public, max-age=3600, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0"
     });
 
     const stream = fs.createReadStream(filePath);
